@@ -32,11 +32,13 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 	}
 	
 	function getSebObject() { // obsolet?
+	    global $DIC;
+	    $user = $DIC->user();
 		$pl = $this->getPluginObject();
-		$login = ($ilUser->getLogin()) ? $ilUser->getLogin() : "";
-		$firstname = ($ilUser->getFirstname()) ? $ilUser->getFirstname() : "";
-		$lastname = ($ilUser->getLastname()) ? $ilUser->getLastname() : "";
-		$matriculation = ($ilUser->getMatriculation()) ? $ilUser->getMatriculation() : "";
+		$login = ($user->getLogin()) ? $user->getLogin() : "";
+		$firstname = ($user->getFirstname()) ? $user->getFirstname() : "";
+		$lastname = ($user->getLastname()) ? $user->getLastname() : "";
+		$matriculation = ($user->getMatriculation()) ? $user->getMatriculation() : "";
 		
 		$seb_user = array(
 					"login" => $login,
@@ -52,7 +54,7 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 	function setUserGUI ($styleDefinition) {
 	    global $DIC;
 
-		$this->$_modifyGUI = 0;
+		$this->_modifyGUI = 0;
 		$styleDefinition::setCurrentSkin($DIC->user()->getPref("skin"));
 		$styleDefinition::setCurrentStyle($DIC->user()->getPref("style"));
 	}
@@ -61,22 +63,10 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 	    include_once 'Services/MainMenu/classes/class.ilMainMenuGUI.php';
 	    global $DIC;
 	    $lng =  $DIC->language();
-//	    $tpl = $DIC->ui()->mainTemplate();
 	    
 		$this->_modifyGUI = 1;
 		$styleDefinition::setCurrentSkin("seb");
 		$styleDefinition::setCurrentStyle("seb");
-		
-/*		$language_selection = ilMainMenuGUI::getLanguageSelection();
-		if($selection)
-		{
-            $tpl->setVariable("TXT_LANGSELECT", $lng->txt("language"));
-		    // bs-patch end
-		    $this->tpl->setVariable("LANG_SELECT", $selection);
-		}
-		$tpl->setCurrentBlock("userisanonymous");
-		$tpl->setVariable("TXT_NOT_LOGGED_IN",$lng->txt("not_logged_in"));
-		$tpl->setVariable("TXT_LOGIN",$lng->txt("log_in")); */
 	}
 	
 	/**
@@ -97,21 +87,21 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 	    $rbacreview =  $DIC->rbac()->review();
 	    $user = $DIC->user();
 	    $log = $DIC->logger();
-		
+	    
+        // We don't have to run through the whole thing if we don't need to modify anything. Let's get out.
 		if (!self::$_modifyGUI ) {
 			return array("mode" => ilUIHookPluginGUI::KEEP, "html" => "");
 		}
 		
 		// JavaScript Injection of seb_object on TA kioskmode
-		
-		if ($a_part == "template_load" && $a_par["tpl_id"] == "Modules/Test/tpl.il_as_tst_kiosk_head.html") {
-		//if ($a_comp == "Services/MainMenu" && $a_part == "main_menu_list_entries") {			
+	
+		if ($a_part == "template_load" && $a_par["tpl_id"] == "Modules/Test/tpl.il_as_tst_kiosk_head.html") {		
 			$pl = $this->getPluginObject();
 			$DIC->ui()->mainTemplate()->addJavaScript($pl->getDirectory() . "/ressources/seb.js");
 			$seb_object = $this->getSebObject(); 
 			return array("mode" => ilUIHookPluginGUI::PREPEND, "html" => "<script type=\"text/javascript\">var seb_object = " . $seb_object . ";</script>");
 		}
-		
+	
 		// JavaScript Injection of seb_object on PD kioskmode
 		
 		if ($a_comp == "Services/MainMenu" && $a_part == "main_menu_list_entries") {			
@@ -125,8 +115,8 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 			return array("mode" => ilUIHookPluginGUI::REPLACE, "html" => "");			
 		}
 		
-		if ($a_comp == "Services/Locator" && $a_part == "main_locator") {			
-			return array("mode" => ilUIHookPluginGUI::REPLACE, "html" => "");
+		if ($a_comp == "Services/Locator" && $a_part == "main_locator") {
+		    return array("mode" => ilUIHookPluginGUI::REPLACE, "html" => "");
 		}
 		
 		if ($a_comp == "Services/PersonalDesktop" && $a_part == "right_column") {
@@ -140,7 +130,7 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 		if ($a_comp == "Services/PersonalDesktop" && $a_part == "left_column") {			
 			return array("mode" => ilUIHookPluginGUI::REPLACE, "html" => "");
 		}
-		 
+		
 		return array("mode" => ilUIHookPluginGUI::KEEP, "html" => "");
 	}
 	
@@ -172,6 +162,7 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 		    }
 		}
 		
+		//This is the first GUI Event triggered when building the GUI. We check if we need to redirect to seb or to block access.
 		if ($a_comp == "Services/Init" && $a_part == "init_style") {
 		    if (isset($_GET['ref_id'])) {
 		        $access_checker = new ilSEBAccessChecker((int)$_GET['ref_id']);

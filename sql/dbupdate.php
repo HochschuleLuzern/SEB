@@ -56,8 +56,8 @@ $data->seb_keys = $data->seb_key;
 unset($data->seb_key);
 unset($data->url_salt);
 unset($data->req_header);
-unset($data->browser_access)
-unset($data->browser_kiosk)
+unset($data->browser_access);
+unset($data->browser_kiosk);
 
 if ($data->seb_keys === 0) {
     $data->seb_keys = '';
