@@ -34,7 +34,7 @@ forbidden_login#:#Bei Ilias anmelden
 tab_title#:#SEB Keys
 title_settings_form#:#Objekt-spezifische Keys
 description_settings_form#:#Keys, welche hier eingetragen werden, sind nur für dieses Objekt gültig!
-key_windows#:#Key für Windows
-key_windows_info#:#Der Key ist im SEB Config Tool im Reiter 'Exams' zu finden. Achtung: Der Key ist funktioniert nur für die Version des SEB, mit welcher er generiert wurde! Es kann nur ein Schlüssel eingetragen werden.
-key_macos#:#Key für MacOS
-key_macos_info#:#Der Key ist im SEB Config Tool im Reiter 'Exams' zu finden. Achtung: Der Key ist funktioniert nur für die Version des SEB, mit welcher er generiert wurde! Es kann nur ein Schlüssel eingetragen werden.
+key_windows#:#Keys für Windows
+key_windows_info#:#Der Key ist im SEB Config Tool im Reiter 'Exams' zu finden. Achtung: Der Key ist funktioniert nur für die Version des SEB, mit welcher er generiert wurde! Es können mehrere durch Komma getrennte Schlüssel eingetragen werden.
+key_macos#:#Keys für MacOS
+key_macos_info#:#Der Key ist im SEB Config Tool im Reiter 'Exams' zu finden. Achtung: Der Key ist funktioniert nur für die Version des SEB, mit welcher er generiert wurde! Es können mehrere durch Komma getrennte Schlüssel eingetragen werden.

@@ -34,7 +34,7 @@ forbidden_login#:#Login to ILIAS
 tab_title#:#SEB Keys
 title_settings_form#:#Object-specific Keys
 description_settings_form#:#Keys entered here are only valid for this object!
-key_windows#:#Key for Windows
-key_windows_info#:#You can find the key in the SEB Config Tool in the Tab 'Exams'. Be aware: The key does only work with the Version of SEB with which it was generated! Only one key can be entered.
-key_macos#:#Key for MacOS
-key_macos_info#:#You can find the key in the SEB Config Tool in the Tab 'Exams'. Be aware: The key does only work with the Version of SEB with which it was generated! Only one key can be entered.
+key_windows#:#Keys for Windows
+key_windows_info#:#You can find the key in the SEB Config Tool in the Tab 'Exams'. Be aware: The key does only work with the Version of SEB with which it was generated! Multiple keys can be entered separated by commas.
+key_macos#:#Keys for MacOS
+key_macos_info#:#You can find the key in the SEB Config Tool in the Tab 'Exams'. Be aware: The key does only work with the Version of SEB with which it was generated! Multiple keys can be entered separated by commas.
