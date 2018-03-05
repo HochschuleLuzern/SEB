@@ -42,7 +42,8 @@ class ilSEBConfig {
         } else {
             $keys = $this->getObjectKeys($ref_id);
             if ($keys['seb_key_win'] != '' || $keys['seb_key_macos'] != '') {
-                return $this->checkKeys($key, $keys, $url);
+                $keys_merged = array_merge(explode(',', $keys['seb_key_win']), explode(',', $keys['seb_key_macos']));
+                return $this->checkKeys($key, $keys_merged, $url);
             } else {
                 return false;
             }
