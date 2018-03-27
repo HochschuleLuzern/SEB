@@ -73,7 +73,7 @@ $ilDB->addTableColumn('ui_uihk_seb_conf', 'name', array(
 
 $ilDB->addTableColumn('ui_uihk_seb_conf', 'value', array(
     'type' => 'text',
-    'length' => '100',
+    'length' => '2000',
     'notnull' => true)
     );
 

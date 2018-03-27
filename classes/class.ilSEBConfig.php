@@ -58,14 +58,15 @@ class ilSEBConfig {
             $q = $this->db->query('SELECT seb_key_win, seb_key_macos FROM ui_uihk_seb_keys');
             $result = $this->db->fetchAll($q);
             $keys = [];
-            foreach ($result as $key) {
-                $keys[] = $key['seb_key_win'];
-                $keys[] = $key['seb_key_macos'];
+            
+            foreach ($result as $result_key) {
+                $keys = array_merge($keys, explode(',', $result_key['seb_key_win']), explode(',', $result_key['seb_key_macos']));
             }
+
             if ($keys == []) {
                 return false;
             } else {
-                return $this->checkKeys($key, $keys_merged, $url);
+                return $this->checkKeys($key, $keys, $url);
             }
             
         }

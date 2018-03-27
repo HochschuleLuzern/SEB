@@ -1,0 +1,36 @@
+<div class="ilMainHeader">
+<header class="container-fluid ilContainerWidth">
+		<div class="row">
+			<a class="navbar-brand" id="sebBrand" href="ilias.php?baseClass=ilPersonalDesktopGUI&amp;cmd=jumpToSelectedItems" target="_top">
+				<img src="Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/SEB/templates/images/seb_logo_big.png" alt="Logo" class="noMirror">
+			</a>
+			<div id='sebUsrImg'>
+				<!-- BEGIN seb_usr_img -->
+					<img src="{SEB_USR_IMG_URL}" alt="{SEB_USR_IMG_ALT}" />
+				<!-- END seb_usr_img -->
+			</div>
+			<div id="sebTestInfo">
+				<!-- BEGIN seb_lang_select -->
+				<div class="dropdown" id="sebLangSelect"><a id="mm_lang_sel" href="#" class="dropdown-toggle" data-toggle="dropdown">{TXT_LANGSELECT} <span class="caret"></span></a>
+					{SEB_LANG_SELECT}
+				</div>
+				<!-- END seb_lang_select -->
+				<!-- BEGIN kiosk_show_participant -->
+				<div id="kioskParticipant">
+					{PARTICIPANT_NAME} (<a href="{SEB_LOGOUT_LINK}" id="sebLogoutLink">{SEB_LOGOUT_TEXT}</a>)
+				</div>
+				<!-- END kiosk_show_participant -->
+				<!-- BEGIN kiosk_show_exam_id -->
+				<div id="kioskExamID">
+					{EXAM_ID_TXT} {EXAM_ID}
+				</div>
+				<!-- END kiosk_show_exam_id -->
+				<!-- BEGIN kiosk_show_title -->
+				<div id="kioskTestTitle">
+					{TEST_TITLE}
+				</div>
+				<!-- END kiosk_show_title -->
+			</div>
+		</div>
+	</header>
+</div>

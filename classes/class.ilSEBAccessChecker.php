@@ -80,7 +80,7 @@ class ilSEBAccessChecker {
         $msgTxt = $pl->txt("forbidden_message");
         $loginTxt = $pl->txt("forbidden_login");
         $login = "<a href=\"" . $script . "\">" . $loginTxt . "</a>";
-        $msg = file_get_contents("./Customizing/global/skin/seb/tpl.seb_forbidden.html");
+        $msg = file_get_contents("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/SEB/templates/default/tpl.seb_forbidden.html");
         $msg = str_replace("{TXT_HEADER}", $headerTxt, $msg);
         $msg = str_replace("{TXT_MESSAGE}", $msgTxt, $msg);
         $msg = str_replace("{LOGIN}", $login, $msg);
@@ -90,7 +90,7 @@ class ilSEBAccessChecker {
         exit;
     }
     
-    public function detectSeb($ref_id = false) {
+    public function detectSeb($ref_id) {
         global $ilDB;
         
         $server_req_header = $_SERVER[ilSEBPlugin::REQ_HEADER];

@@ -66,7 +66,7 @@ class ilSEBConfigGUI extends ilPluginConfigGUI {
 		// SEB key
 		$seb_keys_txt = new ilTextInputGUI($this->pl->txt("seb_keys"), "seb_keys");
 		$seb_keys_txt->setInfo($this->pl->txt("seb_keys_info"));
-		$seb_keys_txt->setSize(150);
+		$seb_keys_txt->setMaxLength(2000);
 		$seb_keys_txt->setValue($this->config->getSEBKeysString());
 		$form->addItem($seb_keys_txt);
 		
