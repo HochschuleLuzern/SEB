@@ -30,6 +30,10 @@ class ilSEBAccessChecker {
         return $this->is_anonymus_user;
     }
     
+    public function checkForValidSebKey() {
+        $server_req_header = $_SERVER[ilSEBPlugin::REQ_HEADER];
+    }
+    
     public function __construct($ref_id) {
         global $DIC;
         $this->DIC = $DIC;
@@ -37,7 +41,7 @@ class ilSEBAccessChecker {
         $rbacreview = $this->DIC->rbac()->review();
         $this->conf = ilSEBConfig::getInstance();
         
-        $this->detectSeb($ref_id);
+        $this->is_seb = $this->detectSeb($ref_id);
         
         $is_root = $rbacreview->isAssigned($user->id,SYSTEM_ROLE_ID);
         
@@ -90,7 +94,7 @@ class ilSEBAccessChecker {
         exit;
     }
     
-    private function detectSeb($ref_id) {
+    private function detectSeb($ref_id = null, $check_all_obj_keys = false) {
         global $ilDB;
         
         $server_req_header = $_SERVER[ilSEBPlugin::REQ_HEADER];
@@ -98,13 +102,15 @@ class ilSEBAccessChecker {
         // ILIAS want to detect a valid SEB with a custom req_header and seb_key
         // if no req_header exists in  the current request: not a seb request
         if (!$server_req_header || $server_req_header == "") {
-            $this->is_seb =ilSebPlugin::NOT_A_SEB_REQUEST; // not a seb request
+            return ilSebPlugin::NOT_A_SEB_REQUEST; // not a seb request
         } else if ($this->conf->checkSebKey($server_req_header, $this->getFullUrl())) {
-            $this->is_seb = ilSEBPlugin::SEB_REQUEST;
+            return ilSEBPlugin::SEB_REQUEST;
+        } else if ($check_all_obj_keys && $this->conf->checkKeyAgainstAllObjectKeys($server_req_header, $this->getFullUrl())) {
+            return ilSEBPlugin::SEB_REQUEST_OBJECT_KEYS_UNSPECIFIC;
         } else if ($this->conf->checkObjectKey($server_req_header, $this->getFullUrl(), $ref_id)) {
-            $this->is_seb = ilSEBPlugin::SEB_REQUEST_OBJECT_KEYS;
+            return ilSEBPlugin::SEB_REQUEST_OBJECT_KEYS;
         } else {
-            $this->is_seb = ilSebPlugin::NOT_A_SEB_REQUEST; // not a seb request
+            return ilSebPlugin::NOT_A_SEB_REQUEST; // not a seb request
         }
     }
     

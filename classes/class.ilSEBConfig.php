@@ -51,6 +51,26 @@ class ilSEBConfig {
         }
     }
     
+    public function checkKeyAgainstAllObjectKeys($key, $url) {
+        if (!$this->conf['allow_object_keys']) {
+            return false;
+        } else {
+            $q = $this->db->query('SELECT seb_key_win, seb_key_macos FROM ui_uihk_seb_keys');
+            $result = $this->db->fetchAll($q);
+            $keys = [];
+            foreach ($result as $key) {
+                $keys[] = $key['seb_key_win'];
+                $keys[] = $key['seb_key_macos'];
+            }
+            if ($keys == []) {
+                return false;
+            } else {
+                return $this->checkKeys($key, $keys_merged, $url);
+            }
+            
+        }
+    }
+    
     private function __construct() {
         global $DIC;
         $this->db = $DIC->database();

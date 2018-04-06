@@ -175,15 +175,26 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 		    $cmd = $ctrl->getCmd();
 		    $cmdclass = $ctrl->getCmdClass();
 		    
+		    //We need to figure out if it is a call from the access checker. Not beautiful, but the best I found.
+		    $calling_class = debug_backtrace();
+		    $calling_class = $calling_class[count($calling_class)-1]['class'];
+		    
 			// don't modify anything after an initial installation with an empty key and without object keys
 			if ($this->conf->getSebKeysString() == ''  && !$this->conf->getAllowObjectKeys()) {
 				$this->setUserGUI($styleDefinition);
 			// don't modify anything in public ilias or if we are on the page with the Agreement or the completion of profile Data
-			} else if ($access_checker->isAnonymusUser() || $cmd == 'showPersonalData' && $cmdclass == 'ilpersonalprofilegui'|| $cmd == 'savePersonalData' && $cmdclass == 'ilpersonalprofilegui' || $cmd == 'getAcceptance' && $cmdclass == 'ilstartupgui' || $cmd == '' && $cmdclass == 'ilstartupgui') {
+			} else if ($access_checker->isAnonymusUser() ||
+			    $cmd == 'showPersonalData' && $cmdclass == 'ilpersonalprofilegui'||
+			    $cmd == 'savePersonalData' && $cmdclass == 'ilpersonalprofilegui' ||
+			    $cmd == 'getAcceptance' && $cmdclass == 'ilstartupgui' ||
+			    $cmd == 'getOSDNotifications' ||
+			    $cmd == '' && $cmdclass == 'ilstartupgui' ||
+			    $calling_class == 'ilWebAccessCheckerDelivery') {
+			    $access_checker->checkForValidSebKey();
 				$this->setUserGUI($styleDefinition);
 			// check browser access
 			} else if ($access_checker->getNeedsSeb() && !$access_checker->isSeb()) {
-			    $access_checker->exitIlias();
+                $access_checker->exitIlias();
 			    return;
 			//Should we switch to Kiosk-Skin?
 			} else if ($access_checker->getSwitchToSebSkin()) {
