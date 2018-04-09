@@ -187,11 +187,15 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 			    $cmd == 'showPersonalData' && $cmdclass == 'ilpersonalprofilegui'||
 			    $cmd == 'savePersonalData' && $cmdclass == 'ilpersonalprofilegui' ||
 			    $cmd == 'getAcceptance' && $cmdclass == 'ilstartupgui' ||
-			    $cmd == 'getOSDNotifications' ||
 			    $cmd == '' && $cmdclass == 'ilstartupgui' ||
+			    $cmd == 'getOSDNotifications' ||
 			    $calling_class == 'ilWebAccessCheckerDelivery') {
-			    $access_checker->checkForValidSebKey();
-				$this->setUserGUI($styleDefinition);
+			        if ($access_checker->detectSeb()) {
+        				$this->setUserGUI($styleDefinition);
+			        } else {
+			            $access_checker->exitIlias();
+			            return;
+			        }
 			// check browser access
 			} else if ($access_checker->getNeedsSeb() && !$access_checker->isSeb()) {
                 $access_checker->exitIlias();

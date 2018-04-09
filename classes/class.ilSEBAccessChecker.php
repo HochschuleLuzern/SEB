@@ -30,10 +30,6 @@ class ilSEBAccessChecker {
         return $this->is_anonymus_user;
     }
     
-    public function checkForValidSebKey() {
-        $server_req_header = $_SERVER[ilSEBPlugin::REQ_HEADER];
-    }
-    
     public function __construct($ref_id) {
         global $DIC;
         $this->DIC = $DIC;
@@ -94,7 +90,7 @@ class ilSEBAccessChecker {
         exit;
     }
     
-    private function detectSeb($ref_id = null, $check_all_obj_keys = false) {
+    public function detectSeb($ref_id = false) {
         global $ilDB;
         
         $server_req_header = $_SERVER[ilSEBPlugin::REQ_HEADER];
@@ -105,7 +101,7 @@ class ilSEBAccessChecker {
             return ilSebPlugin::NOT_A_SEB_REQUEST; // not a seb request
         } else if ($this->conf->checkSebKey($server_req_header, $this->getFullUrl())) {
             return ilSEBPlugin::SEB_REQUEST;
-        } else if ($check_all_obj_keys && $this->conf->checkKeyAgainstAllObjectKeys($server_req_header, $this->getFullUrl())) {
+        } else if (!$ref_id && $this->conf->checkKeyAgainstAllObjectKeys($server_req_header, $this->getFullUrl())) {
             return ilSEBPlugin::SEB_REQUEST_OBJECT_KEYS_UNSPECIFIC;
         } else if ($this->conf->checkObjectKey($server_req_header, $this->getFullUrl(), $ref_id)) {
             return ilSEBPlugin::SEB_REQUEST_OBJECT_KEYS;
