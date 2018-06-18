@@ -1,5 +1,5 @@
 <?php
-include_once("class.ilSEBPlugin.php");
+include_once 'class.ilSEBPlugin.php';
 
 /**
  * GUI-Class ilSEBSettingsTabGUI
@@ -47,9 +47,7 @@ class ilSEBSettingsTabGUI {
     }
   
     function executeCommand() {
-        global $ilCtrl;
-        // Fill content
-        $cmd = $ilCtrl->getCmd();
+        $cmd = $this->ctrl->getCmd();
         
         switch($cmd)
         {
@@ -97,10 +95,6 @@ class ilSEBSettingsTabGUI {
             $this->tpl->setContent($form->getHTML());
             $this->tpl->show();
         }
-    }
-    
-    function defaultcmd() {
-        $tpl->setContent(print_r("123", true));
     }
     
     private function initConfigurationForm() {

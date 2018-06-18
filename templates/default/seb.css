@@ -51,13 +51,21 @@ footer#ilFooter {
 	margin: 6px 0;
 }
 
+#sebBrand img {
+	height: 92px;
+	width: 100px;
+	margin: 6px 0;
+	position: relative;
+	display: inline-block;
+}
+
 #sebUsrImg, #sebBrand {
 	position: relative;
 	z-index: 100;
-}
-
-div#il_startup_logo img,  #ilAll > .ilMainHeader > header > .row > a.navbar-brand {
 	margin: 0;
+	height: auto;
+	display: inline-block;
+	padding: 0;
 }
 
 #ilAll .ilMainHeader > header > .row > a.navbar-brand > img {

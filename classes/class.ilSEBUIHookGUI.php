@@ -6,6 +6,7 @@ include_once './Services/UIComponent/classes/class.ilUIHookPluginGUI.php';
 include_once './Services/Object/classes/class.ilObject.php';
 include_once './Services/Init/classes/class.ilStartUpGUI.php';
 include_once './Services/MainMenu/classes/class.ilMainMenuGUI.php';
+include_once './Services/PrivacySecurity/classes/class.ilSecuritySettings.php';
 include_once 'class.ilSEBPlugin.php';
 include_once 'class.ilSEBConfig.php';
 include_once 'class.ilSEBAccessChecker.php';
@@ -20,7 +21,6 @@ include_once 'class.ilSEBAccessChecker.php';
 class ilSEBUIHookGUI extends ilUIHookPluginGUI {
     // Standard classes as constats
     const STANDARD_BASE_CLASS = 'ilUIPluginRouterGUI';
-    const STANDARD_CMD_CLASS = 'ilSEBSettingsTabGUI';
 	
 	private static $_modifyGUI;
 	private static $_ref_id;
@@ -51,11 +51,11 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 	    if ($this->conf->getSebKeysString() == ''  && !$this->conf->getAllowObjectKeys()) {
 	        self::$_modifyGUI = 0;
 	        // don't modify anything in public ilias or if we are on the page with the Agreement or the completion of profile Data
-	    } else if ($access_checker->isAnonymusUser() ||
+	    } else if ($access_checker->getNeedsSeb() && ($access_checker->isAnonymusUser() ||
 	        $cmd == 'showPersonalData' && $cmdclass == 'ilpersonalprofilegui'||
 	        $cmd == 'savePersonalData' && $cmdclass == 'ilpersonalprofilegui' || 
 	        $cmd == 'getAcceptance' && $cmdclass == 'ilstartupgui' ||
-	        $cmd == '' && $cmdclass == 'ilstartupgui') {
+	        $cmd == '' && $cmdclass == 'ilstartupgui')) {
 	            if ($access_checker->detectSeb(0)) {
 	                self::$_modifyGUI = 1;   
 	            } else {
@@ -102,9 +102,11 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
         $lang_select = str_replace("&", "&amp;", $lang_select);
 	    
 	    $tpl = new ilTemplate('tpl.seb_header.html', true, true, 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/SEB');
-	    $tpl->setCurrentBlock('seb_usr_img');
-	    $tpl->setVariable('SEB_USR_IMG_URL', $this->getUserImage());
-	    $tpl->setVariable('SEB_USR_IMG_ALT', $user->getFullname());
+	    if ($this->conf->getShowPaxPic()) {
+		    $tpl->setCurrentBlock('seb_usr_img');
+		    $tpl->setVariable('SEB_USR_IMG_URL', $this->getUserImage());
+	    	$tpl->setVariable('SEB_USR_IMG_ALT', $user->getFullname());
+	    }
 	    
 	    $tpl->setCurrentBlock("kiosk_show_participant");
 	    $tpl->setVariable("PARTICIPANT_NAME", $user->getFullname());
@@ -217,13 +219,33 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
     	    $obj_type= ilObject::_lookupType($obj_id);
     	    $has_write_access = $DIC->rbac()->system()->checkAccessOfUser($DIC->user()->getId(), 'write', $ref_id);
     
-    	    if ($obj_type == 'tst' && $has_write_access && $this->conf->getAllowObjectKeys() && $_GET['cmd'] != 'showQuestion' && $_GET['cmd'] != 'outUserResultsOverview') {
-    	        $ctrl->setParameterByClass(self::STANDARD_CMD_CLASS, 'ref_id', $ref_id);
-    	        $link = $ctrl->getLinkTargetByClass(array(
-    	            self::STANDARD_BASE_CLASS,
-    	            self::STANDARD_CMD_CLASS
-    	        ),'seb_settings');
-    	        $a_par['tabs']->addTab("SEB Settings", $this->plugin->txt('tab_title'), $link);
+    	    if ($obj_type == 'tst' && $has_write_access && $_GET['cmd'] != 'showQuestion' && $_GET['cmd'] != 'outUserResultsOverview') {
+    	        /**
+    	         * Add Sessioncontrol Tab for SEB
+    	         **/
+    	    	if ($this->conf->getActivateSessionControl() && $_GET['cmdClass'] != 'ilsebsettingstabgui') {
+    	    		$security = ilSecuritySettings::_getInstance();
+    	    		if ($security->isPreventionOfSimultaneousLoginsEnabled()) {
+	    	    		$ctrl->setParameterByClass('ilSEBSessionsTabGUI', 'ref_id', $ref_id);
+	    	    		$link = $ctrl->getLinkTargetByClass(array(
+	    	    				self::STANDARD_BASE_CLASS,
+	    	    				'ilSEBSessionsTabGUI'
+	    	    		),'showSessions');
+	    	    		$a_par['tabs']->addTab('sessions', $this->plugin->txt('sessions_tab_title'), $link);
+    	    		}
+    	    	}
+    	        
+    	        /**
+    	         * Add Settings Tab for SEB
+    	         **/
+    	    	if ($this->conf->getAllowObjectKeys() && $_GET['cmdClass'] != 'ilsebsessionstabgui') {
+	    	        $ctrl->setParameterByClass('ilSEBSettingsTabGUI', 'ref_id', $ref_id);
+	    	        $link = $ctrl->getLinkTargetByClass(array(
+	    	            self::STANDARD_BASE_CLASS,
+	    	            'ilSEBSettingsTabGUI'
+	    	        ),'seb_settings');
+	    	        $a_par['tabs']->addTab("seb_settings", $this->plugin->txt('settings_tab_title'), $link);
+    	    	}
     	    }
 		}
 	}

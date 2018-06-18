@@ -25,16 +25,24 @@ role_none#:#Keine Rolle
 browser_seb#:#SEB
 browser_none#:#Kein Browser
 browser_all#:#Alle Browser
+activate_session_control#:#Session Überprüfung aktivieren
+activate_session_control_info#:#Diese Einstellung aktiviert einen Tab im Test, welcher es erlaubt Sessions von Testnutzern zu Beenden. Dies ist wichtig, um auf Systemen, auf welchen gleichzeitige Logins verhindert werden, im Fall von Abstürzen, den Studierenden wieder Zugriff geben zu können.
+activate_session_control_info_disabled#:#Um diese Funktion nutzen zu können, müssen sie in der Administration unter "Benutzerverwaltung Einstellung" "Verhindern gleichzeitiger Logins" aktivieren. Sie erlaubt es, auf Systemen, auf welchen gleichzeitige Logins verhindert werden, im Fall von Abstürzen, den Studierenden wieder Zugriff zu gewähren.
 save_success#:#Speichern erfolgreich
 save_failure#:#Speichern fehlgeschlagen!
 nothing_changed#:#Keine Änderungen
 forbidden_header#:#Keine Berechtigung!
 forbidden_message#:#Sie haben mit diesem Browser keine Berechtigung auf das System zuzugreifen. <br />Bitte kontaktieren Sie den Systemadminstrator.
 forbidden_login#:#Bei Ilias anmelden
-tab_title#:#SEB Keys
+settings_tab_title#:#SEB Keys
+sessions_tab_title#:#Benutzer Sessions
 title_settings_form#:#Objekt-spezifische Keys
 description_settings_form#:#Keys, welche hier eingetragen werden, sind nur für dieses Objekt gültig!
 key_windows#:#Keys für Windows
 key_windows_info#:#Der Key ist im SEB Config Tool im Reiter 'Exams' zu finden. Achtung: Der Key ist funktioniert nur für die Version des SEB, mit welcher er generiert wurde! Es können mehrere durch Komma getrennte Schlüssel eingetragen werden.
 key_macos#:#Keys für MacOS
 key_macos_info#:#Der Key ist im SEB Config Tool im Reiter 'Exams' zu finden. Achtung: Der Key ist funktioniert nur für die Version des SEB, mit welcher er generiert wurde! Es können mehrere durch Komma getrennte Schlüssel eingetragen werden.
+title_sessions_table#:#Aktuelle Sessions von Test-Teilnehmer/innen
+delete_session_of_users#:#Sessions von ausgewählten Teilnehmer/innen löschen
+show_pax_pic#:#Bilder der Teilnehmer/innen anzeigen
+show_pax_pic_info#:#Wenn diese Option aktiviert ist, wird während des Tests rechts oben ein Foto der Teilnehmerin/des Teilnehmers angezeigt. Bedingt, dass Profilbilder auf der ILIAS-Installation vorhanden sind.

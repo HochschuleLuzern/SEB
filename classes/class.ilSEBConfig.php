@@ -24,6 +24,14 @@ class ilSEBConfig {
         return $this->conf['allow_object_keys'];
     }
     
+    public function getActivateSessionControl() {
+    	return $this->conf['activate_session_control'];
+    }
+    
+    public function getShowPaxPic() {
+    	return $this->conf['show_pax_pic'];
+    }
+    
     public function getObjectKeys($ref_id) {
         $q = $this->db->query("SELECT * FROM ui_uihk_seb_keys where ref_id=".$this->db->quote($ref_id, 'integer'));
         if ($keys = $this->db->fetchAssoc($q)) {
@@ -93,7 +101,9 @@ class ilSEBConfig {
             'seb_keys',
             'allow_object_keys',
             'role_deny',
-            'role_kiosk'
+            'role_kiosk',
+        	'activate_session_control',
+        	'show_pax_pic'
         );
         
         $r = 0;

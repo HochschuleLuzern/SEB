@@ -25,16 +25,24 @@ role_none#:#None
 browser_seb#:#SEB
 browser_none#:#None
 browser_all#:#All
+activate_session_control#:#Activate Session Control
+activate_session_control_info#:#This activates a tab in tests, to delete existing sessions of test users. This is important, to reanable users, when "Prevent Simultaneous Logins" is enabled and a user got disconnected because of technical problems.
+activate_session_control_info_disabled#:#This function can only be activated if "Prevent Simultaneous Logins" is enabled in the "Settings" part of the "User Management".
 save_success#:#Save succesful
 save_failure#:#Save failed!
 nothing_changed#:#Nothing changed
 forbidden_header#:#Access denied!
 forbidden_message#:#You are not authorized to access the system with this browser.<br />Please contact your system administrator.
 forbidden_login#:#Login to ILIAS
-tab_title#:#SEB Keys
+settings_tab_title#:#SEB Keys
+sessions_tab_title#:#User Sessions
 title_settings_form#:#Object-specific Keys
 description_settings_form#:#Keys entered here are only valid for this object!
 key_windows#:#Keys for Windows
 key_windows_info#:#You can find the key in the SEB Config Tool in the Tab 'Exams'. Be aware: The key does only work with the Version of SEB with which it was generated! Multiple keys can be entered separated by commas.
 key_macos#:#Keys for MacOS
 key_macos_info#:#You can find the key in the SEB Config Tool in the Tab 'Exams'. Be aware: The key does only work with the Version of SEB with which it was generated! Multiple keys can be entered separated by commas.
+title_sessions_table#:#Current Sessions for Test-Participants
+delete_session_of_users#:#Delete Sessions of Selected Participants
+show_pax_pic#:#Show picture of Participants
+show_pax_pic_info#:#If enabled a image of the participant is shown in the right corner of the screen. For this to work images need to be available on ILIAS.

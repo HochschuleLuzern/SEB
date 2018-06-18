@@ -1,8 +1,9 @@
 <?php
 
-include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
-include_once("class.ilSEBPlugin.php");
-include_once("class.ilSEBConfig.php");
+include_once './Services/Component/classes/class.ilPluginConfigGUI.php';
+include_once './Services/PrivacySecurity/classes/class.ilSecuritySettings.php';
+include_once 'class.ilSEBPlugin.php';
+include_once 'class.ilSEBConfig.php';
 /**
  * Example configuration user interface class
  *
@@ -93,9 +94,27 @@ class ilSEBConfigGUI extends ilPluginConfigGUI {
 		$role_kiosk_sel->setValue($this->config->getRoleKiosk());
 		$form->addItem($role_kiosk_sel);
 		
-		$form->addCommandButton("save", $this->DIC->language()->txt("save"));
+		// activate session control
+		$activate_session_control_cb = new ilCheckboxInputGUI($this->pl->txt('activate_session_control'), 'activate_session_control');
+		$security = ilSecuritySettings::_getInstance();
+		if ($security->isPreventionOfSimultaneousLoginsEnabled()) {
+			$activate_session_control_cb->setInfo($this->pl->txt('activate_session_control_info'));
+		} else {
+			$activate_session_control_cb->setInfo($this->pl->txt('activate_session_control_info_disabled'));
+			$activate_session_control_cb->setDisabled(true);
+		}
+		$activate_session_control_cb->setChecked($this->config->getActivateSessionControl());
+		$form->addItem($activate_session_control_cb);
+		
+		// show pax picture
+		$show_pax_pic_cb = new ilCheckboxInputGUI($this->pl->txt('show_pax_pic'), 'show_pax_pic');
+		$show_pax_pic_cb->setInfo($this->pl->txt('show_pax_pic_info'));			
+		$show_pax_pic_cb->setChecked($this->config->getShowPaxPic());
+		$form->addItem($show_pax_pic_cb);
+		
+		$form->addCommandButton('save', $this->DIC->language()->txt('save'));
 	                
-		$form->setTitle($this->pl->txt("config"));
+		$form->setTitle($this->pl->txt('config'));
 		$form->setFormAction($this->DIC->ctrl()->getFormAction($this));
 		
 		return $form;
@@ -114,7 +133,9 @@ class ilSEBConfigGUI extends ilPluginConfigGUI {
 		    $form_input['seb_keys'] = $form->getInput('seb_keys');
 		    $form_input['allow_object_keys'] = $form->getInput('allow_object_keys');
 		    $form_input['role_deny'] = $form->getInput('role_deny');
-		    $form_input['role_kiosk'] = $form->getInput('role_kiosk');		    
+		    $form_input['role_kiosk'] = $form->getInput('role_kiosk');
+		    $form_input['activate_session_control'] = $form->getInput('activate_session_control');
+		    $form_input['show_pax_pic'] = $form->getInput('show_pax_pic');
 		    
 		    $success = $this->config->saveSEBConf($form_input);
 
