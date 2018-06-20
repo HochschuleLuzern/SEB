@@ -46,3 +46,6 @@ title_sessions_table#:#Aktuelle Sessions von Test-Teilnehmer/innen
 delete_session_of_users#:#Sessions von ausgewählten Teilnehmer/innen löschen
 show_pax_pic#:#Bilder der Teilnehmer/innen anzeigen
 show_pax_pic_info#:#Wenn diese Option aktiviert ist, wird während des Tests rechts oben ein Foto der Teilnehmerin/des Teilnehmers angezeigt. Bedingt, dass Profilbilder auf der ILIAS-Installation vorhanden sind.
+no_sessions_selected#:#Sie müssen mindestens eine Session auswählen, um diese zu entfernen.
+sessions_deleted#:#Die Session(s) wurden entfernt.
+title_delete_sessions_table#:#Die folgenden Session(s) werden entfernt und die entsprechenden Teilnehmer/innen ausgelogt.

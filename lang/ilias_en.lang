@@ -46,3 +46,6 @@ title_sessions_table#:#Current Sessions for Test-Participants
 delete_session_of_users#:#Delete Sessions of Selected Participants
 show_pax_pic#:#Show picture of Participants
 show_pax_pic_info#:#If enabled a image of the participant is shown in the right corner of the screen. For this to work images need to be available on ILIAS.
+no_sessions_selected#:#Please select the sessions you want to delete.
+sessions_deleted#:#The sessions where deleted.
+title_delete_sessions_table#:#The following sessions will be deleted and the corresponding users will be logged out

@@ -1,9 +1,15 @@
 <tr class="{CSS_ROW}">
-	<!-- BEGIN tbl_row -->
+	<!-- BEGIN id -->
 	<td class="std">
 			<input type="checkbox" name="id[]" value="{ID}" />
 	</td>
-    <td class="std">{LOGIN}</td>
+	<td class="std">
+	<!-- END id -->
+	<!-- BEGIN id_hidden -->
+	<td class="std"><input type="hidden" name="id[]" value="{ID}" />
+	<!-- END id_hidden -->
+	<!-- BEGIN tbl_row -->
+    {LOGIN}</td>
     <td class="std">{FIRST_NAME}</td>
     <td class="std">{LAST_NAME}</td>
     <!-- END tbl_row -->

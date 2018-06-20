@@ -68,8 +68,11 @@ class ilSEBSessionsTabGUI {
             case 'resetFilter':
             	$this->showSessions('reset');
             	break;
-            case 'deleteSession':
-            	$this->deleteSession();
+            case 'confirmDeleteSessions':
+            	$this->confirmDeleteSessions();
+            	break;
+            case 'deleteSessions':
+            	$this->deleteSessions();
             	break;
         }
         
@@ -92,12 +95,16 @@ class ilSEBSessionsTabGUI {
         		}
         	}
         			
-        	$this->initSessionTable($users);
+        	$this->initSessionTable($users, 'show');
         }
     }
     
-    private function initSessionTable($users) {
-    	$sessions_table = new ilSEBSessionsTableGUI($this, 'showSessions');
+    private function initSessionTable($users, $action) {
+    	if ($action == 'show') {
+	    	$sessions_table = new ilSEBSessionsTableGUI($this, 'confirmDeleteSessions');
+    	} else if ($action == 'confirm') {
+    		$sessions_table = new ilSEBSessionsTableGUI($this, 'deleteSessions');
+    	}
     	$sessions_table->setData($users);
     	
     	if (isset($_GET['_table_nav'])) {
@@ -115,10 +122,27 @@ class ilSEBSessionsTabGUI {
     	$this->tpl->show();
     }
     
-    private function deleteSession() {
+    private function confirmDeleteSessions() {
+    	$this->initHeader();
+    	
+    	if (count($_POST['id']) > 0) {
+	    	$sessions = implode("','", $_POST['id']);
+	    	$q = $this->db->query("SELECT session_id, user_id FROM usr_session WHERE session_id IN (".$this->db->quote($sessions, 'text').") AND expires > ".time());
+	    	$sessions = $this->db->fetchAll($q);
+	    	$users = $this->getUsersForSessions($sessions);
+	    	$this->initSessionTable($users, 'confirm');
+    	} else {
+    		ilUtil::sendInfo($this->pl->txt('no_sessions_selected'));
+    		$this->showSessions(show);
+    	}
+    }
+    
+    private function deleteSessions() {
     	foreach ($_POST['id'] as $session) {
     		ilSession::_destroy($session);
     	}
+    	
+    	ilUtil::sendSuccess($this->pl->txt('sessions_deleted'));
     	$this->showSessions('show');
     }
     
@@ -160,10 +184,11 @@ class ilSEBSessionsTabGUI {
     	if (count($filter) > 0) {
     		array_intersect($paxs_array, $filter);
     	}
+    	
     	$paxs = implode("','", $paxs_array);
     	
-		$q = $this->db->query("SELECT session_id, user_id FROM usr_session WHERE user_id IN ('$paxs') AND expires > ".time());
-		return $this->db->fetchAll($q);
+    	$q = $this->db->query("SELECT session_id, user_id FROM usr_session WHERE user_id IN ('$paxs') AND expires > ".time());
+    	return $this->db->fetchAll($q);
     }
     
     private function getUsersForSessions($sessions) {
