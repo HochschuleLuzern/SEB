@@ -94,9 +94,11 @@ class ilSEBSessionsTabGUI {
         			}
         		}
         	}
-        			
-        	$this->initSessionTable($users, 'show');
+        } else {
+        	$users = [];			
         }
+        
+        $this->initSessionTable($users, 'show');
     }
     
     private function initSessionTable($users, $action) {
@@ -133,7 +135,7 @@ class ilSEBSessionsTabGUI {
 	    	$this->initSessionTable($users, 'confirm');
     	} else {
     		ilUtil::sendInfo($this->pl->txt('no_sessions_selected'));
-    		$this->showSessions(show);
+    		$this->showSessions('show');
     	}
     }
     

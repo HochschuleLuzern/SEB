@@ -6,7 +6,6 @@ class ilSEBSessionsTableGUI extends ilTable2GUI
 {
     /** @var $pl ilSEBUIHookGUI */
     protected $plugin;
-    private $ctrl;
     private $lang;
     private $hide_checkbox = false;
     
@@ -16,7 +15,6 @@ class ilSEBSessionsTableGUI extends ilTable2GUI
     	
     	parent::__construct($object_gui, $cmd);
     	$this->plugin = ilSEBPlugin::getInstance();
-    	$this->ctrl = $DIC->ctrl();
     	$this->lang = $DIC->language();
     	
     	$this->setRowTemplate("tpl.seb_sessions_table_row.html", "Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/SEB/");
