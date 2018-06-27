@@ -28,9 +28,9 @@ include_once("./Services/UIComponent/classes/class.ilUserInterfaceHookPlugin.php
 class ilSEBPlugin extends ilUserInterfaceHookPlugin
 {
 	const NOT_A_SEB_REQUEST = 0;
-	const SEB_REQUEST = 1;
-	const SEB_REQUEST_OBJECT_KEYS = 2;
-	const SEB_REQUEST_OBJECT_KEYS_UNSPECIFIC = 3;
+	const SEB_REQUEST_OBJECT_KEYS_UNSPECIFIC = 1;
+	const SEB_REQUEST = 2;
+	const SEB_REQUEST_OBJECT_KEYS = 3;
 	const ROLES_NONE = 0;
 	const ROLES_ALL = 1;
 	const BROWSER_KIOSK_ALL = 0;
@@ -47,16 +47,6 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
 	        self::$instance = new self;
 	        return self::$instance;
 	    }
-	}
-	
-	private static function _isAPCInstalled() {
-		return (function_exists("apc_store") && function_exists("apc_fetch"));
-	}
-	
-	public static function _flushAPC() {
-		if (ilSEBPlugin::_isAPCInstalled() && apc_exists(ilSEBPlugin::CACHE))  {
-			apc_delete(ilSEBPlugin::CACHE);
-		}
 	}
 	
 	function getPluginName() {

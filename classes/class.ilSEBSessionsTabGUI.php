@@ -23,29 +23,33 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
+/**
+ * All needed includes
+ * 
+ * The includes from ILIAS core can be removed with ILIAS5.3
+ */
 include_once './Modules/Test/classes/class.ilTestParticipantData.php';
 include_once './Modules/Test/classes/class.ilObjTest.php';
 include_once './Services/User/classes/class.ilObjUser.php';
 include_once './Services/Authentication/classes/class.ilSession.php';
 include_once 'class.ilSEBPlugin.php';
+include_once 'class.ilSEBTabGUI.php';
 include_once 'class.ilSEBSessionsTableGUI.php';
 
-class ilSEBSessionsTabGUI {
-    /** @var $object ilObjComponentSettings */
-    protected $object;
-    
-    private $tpl;
+/**
+ * GUI Class to show a tab to manage Sessions in Test Object
+ *
+ * @author Stephan Winiker <stephan.winiker@hslu.ch>
+ *
+ */
+class ilSEBSessionsTabGUI extends ilSEBTabGUI {
     private $pl;
     private $conf;
-    private $ctrl;
     private $user;
-    private $tabs;
     private $db;
-    private $lang;
-    private $obj_def;
-    private $ref_id;
+    private $rbac_system;
     
-    function __construct()
+    public function __construct()
     {
         /**
          * @var $ilCtrl ilCtrl
@@ -53,59 +57,63 @@ class ilSEBSessionsTabGUI {
          * @var $ilTabs ilTabsGUI
          */
         global $DIC;
-        
-        $this->tpl = $DIC->ui()->mainTemplate();
-        $this->ctrl = $DIC->ctrl();
+        parent::__construct();
         $this->user = $DIC->user();
-        $this->tabs = $DIC->tabs();
         $this->db = $DIC->database();
-        $this->lang = $DIC->language();
-        $this->obj_def = $DIC['objDefinition'];
+        $this->rbac_system = $DIC->rbac()->system();
         
         $this->pl = ilSEBPlugin::getInstance();
         $this->conf = ilSEBConfig::getInstance();
         
-        $this->ref_id = $_GET['ref_id'];
-        $this->object = ilObjectFactory::getInstanceByRefId($this->ref_id);
-        
         $this->ctrl->setParameter($this, 'ref_id', $this->ref_id);
     }
-  
-    function executeCommand() {
-        // Fill content
-        $cmd = $this->ctrl->getCmd();
-
-        switch($cmd)
-        {
-            case 'showSessions':
-            case 'applyFilter':
-            	$this->showSessions('show');
-            	break;
-            case 'resetFilter':
-            	$this->showSessions('reset');
-            	break;
-            case 'confirmDeleteSessions':
-            	$this->confirmDeleteSessions();
-            	break;
-            case 'deleteSessions':
-            	$this->deleteSessions();
-            	break;
-        }
-        
+    
+    /**
+     * We do all access checking in here and do only accept valid commands (no default)
+     * 
+     */
+    public function executeCommand() {
+    	if ($this->rbac_system->checkAccess('write', $this->ref_id && (in_array(($cmd = $this->ctrl->getCmd()), ['showSessions', 'applyFilter', 'resetFilter', 'confirmDeleteSession', 'deleteSession'])))) {
+	        switch($cmd)
+	        {
+	            case 'showSessions':
+	            case 'applyFilter':
+	            	$this->showSessions('show');
+	            	break;
+	            case 'resetFilter':
+	            	$this->showSessions('reset');
+	            	break;
+	            case 'confirmDeleteSessions':
+	            	$this->confirmDeleteSessions();
+	            	break;
+	            case 'deleteSessions':
+	            	$this->deleteSessions();
+	            	break;
+	        }
+    	} else {
+    		$this->ctrl->returnToParent($this);
+    	}
         
     }
     
+    /**
+     * Gets the current sessions of user participants, filters the list, and calls initSessionTable to show the list
+     * 
+     * @param string $mode One of 'show' indicating that the list of sessions should simply be shown applying all filters or 'reset' if the filters need to be reset
+     */
     private function showSessions($mode) {
-        $this->initHeader();
+        $this->setupUI();
         
         if (($sessions = $this->getSessionsForTestParticipants()) &&
-        		($users = $this->getUsersForSessions($sessions)) !== false) {
+        		($users = $this->getUsersForSessions($sessions))) {
         			
         	if ($mode == 'reset') {
         		unset($_POST['user']);
 	        } else if (isset($_POST['user']) && $_POST['user'] != '') {
         		foreach ($users as $index => $user) {
-        			if (!stristr($user['login'], $_POST['user']) && !stristr($user['first_name'], $_POST['user'])) {
+        			if (!stristr($user['login'], $_POST['user']) && 
+        					!stristr($user['first_name'], $_POST['user'])  &&
+        					!stristr($user['last_name'], $_POST['user'])) {
         				unset($users[$index]);
         			}
         		}
@@ -114,15 +122,49 @@ class ilSEBSessionsTabGUI {
         	$users = [];			
         }
         
-        $this->initSessionTable($users, 'show');
+        $this->initSessionTable($users, 'confirmDeleteSessions');
     }
     
-    private function initSessionTable($users, $action) {
-    	if ($action == 'show') {
-	    	$sessions_table = new ilSEBSessionsTableGUI($this, 'confirmDeleteSessions');
-    	} else if ($action == 'confirm') {
-    		$sessions_table = new ilSEBSessionsTableGUI($this, 'deleteSessions');
+    /**
+     * Gets a list of users with their sessions for all the session ids posted and calls initSessionTable to show the list
+     * to confirm deletion of those sessions.
+     * 
+     */
+    private function confirmDeleteSessions() {
+    	$this->setupUI();
+    	
+    	if (count($_POST['id']) > 0) {
+    		$sessions = implode("','", $_POST['id']);
+    		$q = $this->db->query("SELECT session_id, user_id FROM usr_session WHERE session_id IN (".$this->db->quote($sessions, 'text').") AND expires > ".time());
+    		$sessions = $this->db->fetchAll($q);
+    		$users = $this->getUsersForSessions($sessions);
+    		$this->initSessionTable($users, 'deleteSessions');
+    	} else {
+    		ilUtil::sendInfo($this->pl->txt('no_sessions_selected'));
+    		$this->showSessions('show');
     	}
+    }
+    
+    /**
+     * Called when a set of sessions has been confirmed for deletion, deletes those sessions, and redirects back to the list of sessions.
+     */
+    private function deleteSessions() {
+    	foreach ($_POST['id'] as $session) {
+    		ilSession::_destroy($session);
+    	}
+    	
+    	ilUtil::sendSuccess($this->pl->txt('sessions_deleted'));
+    	$this->showSessions('show');
+    }
+    
+    /**
+     * Generates the SessionTable to show all sessions or to confirm deletion of sessions
+     * 
+     * @param array $users of all users with sessions to be shown in the table
+     * @param string $action One of 'confirmDeleteSessions' if you want to show the participant table or 'deleteSessions' if a list of sessions should be shown for confirmation 
+     */
+    private function initSessionTable($users, $action) {
+	    $sessions_table = new ilSEBSessionsTableGUI($this, $action);
     	$sessions_table->setData($users);
     	
     	if (isset($_GET['_table_nav'])) {
@@ -140,68 +182,16 @@ class ilSEBSessionsTabGUI {
     	$this->tpl->show();
     }
     
-    private function confirmDeleteSessions() {
-    	$this->initHeader();
-    	
-    	if (count($_POST['id']) > 0) {
-	    	$sessions = implode("','", $_POST['id']);
-	    	$q = $this->db->query("SELECT session_id, user_id FROM usr_session WHERE session_id IN (".$this->db->quote($sessions, 'text').") AND expires > ".time());
-	    	$sessions = $this->db->fetchAll($q);
-	    	$users = $this->getUsersForSessions($sessions);
-	    	$this->initSessionTable($users, 'confirm');
-    	} else {
-    		ilUtil::sendInfo($this->pl->txt('no_sessions_selected'));
-    		$this->showSessions('show');
-    	}
-    }
-    
-    private function deleteSessions() {
-    	foreach ($_POST['id'] as $session) {
-    		ilSession::_destroy($session);
-    	}
-    	
-    	ilUtil::sendSuccess($this->pl->txt('sessions_deleted'));
-    	$this->showSessions('show');
-    }
-    
-    private function initHeader() {
-        global $DIC;
-        
-        /* Add breadcrumbs */
-        $DIC['ilLocator']->addRepositoryItems($this->ref_id);
-        $DIC['ilLocator']->addItem($this->object->getTitle(), 
-           $this->ctrl->getLinkTargetByClass(array(
-                'ilRepositoryGUI',
-                'ilObj' . $this->obj_def->getClassName($this->object->getType()) . 'GUI'
-                ),
-            "",
-            $this->ref_id));
-        $this->tpl->setLocator();
-        
-        /* Add title, description and icon of the current repositoryobject */
-        $this->tpl->setTitle($this->object->getTitle());
-        $this->tpl->setDescription($this->object->getDescription());
-        $this->tpl->setTitleIcon(ilUtil::getTypeIconPath($this->object->getType(), $this->object->getId(), 'big'));
-        
-        /* Create and add backlink */
-        $back_link = $this->ctrl->getLinkTargetByClass(array(
-            'ilRepositoryGUI',
-            'ilObj' . $this->obj_def->getClassName($this->object->getType()) . 'GUI'
-        ));
-        
-        $class_name = $this->obj_def->getClassName($this->object->getType());
-        $this->ctrl->setParameterByClass('ilObj' . $class_name . 'GUI', 'ref_id', $this->ref_id);
-        $this->tabs->setBackTarget($DIC->language()->txt('back'), $back_link);
-    }
-    
-    private function getSessionsForTestParticipants($filter = []) {
+    /**
+     * Gets all the users who have participated / are participating in the test and returns a list of sessions for them
+     * 
+     * @return mixed An array of all the sessions or false if none where found
+     */
+    private function getSessionsForTestParticipants() {
     	$test = new ilObjTest($this->ref_id);
     	$pax_data = new ilTestParticipantData($this->db, $this->lang);
     	$pax_data->load($test->getTestId());
     	$paxs_array = $pax_data->getUserIds();
-    	if (count($filter) > 0) {
-    		array_intersect($paxs_array, $filter);
-    	}
     	
     	$paxs = implode("','", $paxs_array);
     	
@@ -209,6 +199,12 @@ class ilSEBSessionsTabGUI {
     	return $this->db->fetchAll($q);
     }
     
+    /**
+     * Adds firstname, lastname, and login information to a list of sessions containing a session_id and a user_id
+     *
+     * @param array An associative array containing user_id and session_id for each record 
+     * @return array An array of sessions enriched with user information
+     */
     private function getUsersForSessions($sessions) {
     	$users = [];
     	foreach ($sessions as $session) {

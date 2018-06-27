@@ -23,17 +23,27 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
+/**
+ * All needed includes
+ *
+ * The includes from ILIAS core can be removed with ILIAS5.3
+ */
 include_once './Services/Table/classes/class.ilTable2GUI.php';
 include_once 'class.ilSEBPlugin.php';
 
+/**
+ * GUI Class to show a table of all sessions linked to a protected tests
+ *
+ * @author Stephan Winiker <stephan.winiker@hslu.ch>
+ *
+ */
 class ilSEBSessionsTableGUI extends ilTable2GUI
 {
-    /** @var $pl ilSEBUIHookGUI */
-    protected $plugin;
+    private $plugin;
     private $lang;
     private $hide_checkbox = false;
     
-    function __construct($object_gui, $cmd)
+    public function __construct($object_gui, $cmd)
     {
     	global $DIC;
     	
@@ -41,7 +51,7 @@ class ilSEBSessionsTableGUI extends ilTable2GUI
     	$this->plugin = ilSEBPlugin::getInstance();
     	$this->lang = $DIC->language();
     	
-    	$this->setRowTemplate("tpl.seb_sessions_table_row.html", "Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/SEB/");
+    	$this->setRowTemplate('tpl.seb_sessions_table_row.html', 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/SEB/');
     	$this->setFormAction($this->ctrl->getFormAction($object_gui, $cmd));
     	$this->setEnableHeader(true);
     	$this->setExternalSorting(false);
@@ -62,7 +72,8 @@ class ilSEBSessionsTableGUI extends ilTable2GUI
     		$this->addCommandButton('deleteSessions', $this->lang->txt('delete'));
     	}
     }
-
+	
+    
     public function initFilter()
     {	
     	$user = $this->addFilterItemByMetaType('user', ilTable2GUI::FILTER_TEXT, false, $this->lang->txt('user'));
@@ -85,7 +96,7 @@ class ilSEBSessionsTableGUI extends ilTable2GUI
     
     /**
      *
-     * @param unknown $row
+     * @param array $row Contains the data for the table row
      */
     function fillRow($row)
     {

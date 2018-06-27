@@ -56,6 +56,12 @@ class ilSEBConfig {
     	return $this->conf['show_pax_pic'];
     }
     
+    /**
+     * Returns the seb keys for an object reference id
+     * 
+     * @param integer $ref_id integer object reference id
+     * @return array of valid keys for current object reference. Array values can contain a comma separated list of keys!
+     */
     public function getObjectKeys($ref_id) {
         $q = $this->db->query("SELECT * FROM ui_uihk_seb_keys where ref_id=".$this->db->quote($ref_id, 'integer'));
         if ($keys = $this->db->fetchAssoc($q)) {
@@ -68,6 +74,14 @@ class ilSEBConfig {
         }
     }
     
+    /**
+     * Check a key against the object specific keys of a specific object reference
+     * 
+     * @param string $key SHA256 hash of key and url as provided by SEB in the corresponding header
+     * @param string $url Full Url of the request
+     * @param integer $ref_id Object Reference of the object against which to check
+     * @return boolean true if it is a valid object key
+     */
     public function checkObjectKey($key, $url, $ref_id) {
         if (!$this->conf['allow_object_keys']) {
             return false;
@@ -83,6 +97,13 @@ class ilSEBConfig {
         }
     }
     
+    /**
+     * Check a key against all the keys of all objects needed for requests where object reference is unknown
+     *
+     * @param string $key SHA256 hash of key and url as provided by SEB in the corresponding header
+     * @param string $url Full Url of the request
+     * @return boolean true if it is a valid object key
+     */
     public function checkKeyAgainstAllObjectKeys($key, $url) {
         if (!$this->conf['allow_object_keys']) {
             return false;
@@ -120,6 +141,12 @@ class ilSEBConfig {
         return self::$instance;
     }
     
+    /**
+     * Safes all information from the config form.
+     * 
+     * @param array $conf An associative array containing all configuration values. See the varliable $valid_names for the currently supported keys/configuration options.
+     * @return number of updated config values.
+     */
     public function saveSEBConf($conf) {
         $valid_names = array(
             'seb_keys',
@@ -153,6 +180,14 @@ class ilSEBConfig {
         return $r;
     }
     
+    /**
+     * Save Object Keys from Settings-Tab in the test
+     * 
+     * @param integer $ref_id Object reference id of the object the keys are for
+     * @param string $seb_key_win Comma separated string of hashes for SEB
+     * @param string $seb_key_macos Comma separated string of hashes for SEB
+     * @return integer 1 if operation was successful
+     */
     public function saveObjectKeys($ref_id, $seb_key_win, $seb_key_macos) {
         $q = $this->db->query("SELECT * FROM ui_uihk_seb_keys where ref_id=".$this->db->quote($ref_id, 'integer'));
         if ($this->db->fetchAssoc($q)) {
@@ -179,6 +214,9 @@ class ilSEBConfig {
         }
     }
     
+    /**
+     * Read the config for this plugin and store it in this config object
+     */
     private function readSEBConf() {
         $q = $this->db->query("SELECT * FROM ui_uihk_seb_conf");
         
@@ -195,6 +233,14 @@ class ilSEBConfig {
         }
     }
     
+    /**
+     * Check a key given in the SEB-Header by the browser against an array of keys given to this function
+     * 
+     * @param string $key to be checked (needle)
+     * @param string $keys to check against (haystack)
+     * @param string $url the request was sent to. Needed to calculate the hashed key to compare
+     * @return boolean True if key to check corresponds to a key in the array.
+     */
     private function checkKeys($key, $keys, $url) {
         foreach ($keys as $seb_key) {
             if ($key == hash('sha256',$url . trim($seb_key))) {

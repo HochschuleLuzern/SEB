@@ -28,46 +28,77 @@ include_once("class.ilSEBConfig.php");
 
 class ilSEBAccessChecker {
     private $conf;
-    private $DIC;
+    private $auth;
     
+    /*
+     * Getter Functions
+     */
+    
+    /**
+     * Is the browser accessing ILIAS a Safe Exam Browser?
+     * 
+     * @var integer
+     */
     private $is_seb;
     
+    /**
+     * Is the browser accessing ILIAS a Safe Exam Browser?
+     * 
+     * @return integer See constants in ilSEBPlugin
+     */
     public function isSeb() {
         return $this->is_seb;
     }
     
+    /**
+     * Is the browser accessing ILIAS a Safe Exam Browser?
+     *
+     * @var boolean
+     */
     private $needs_seb;
     
+    /**
+     * Is the browser accessing ILIAS a Safe Exam Browser?
+     *
+     * @return boolean
+     */
     public function getNeedsSeb() {
         return $this->needs_seb;
     }
     
+    /**
+     * To we need to switch to kiosk/seb template
+     *
+     * @var boolean
+     */
     private $switch_to_seb_skin;
     
+    /**
+     * To we need to switch to kiosk/seb template
+     *
+     * @return boolean
+     */
     public function getSwitchToSebSkin() {
         return $this->switch_to_seb_skin;
     }
     
-    private $is_anonymus_user;
-    
-    public function isAnonymusUser() {
-        return $this->is_anonymus_user;
-    }
-    
+    /**
+     * We set everying up in the constructor, populating all variables
+     * 
+     * @param integer $ref_id of the repository object that the user wants to access
+     */
     public function __construct($ref_id) {
         global $DIC;
-        $this->DIC = $DIC;
-        $user = $this->DIC->user();
-        $rbacreview = $this->DIC->rbac()->review();
+        $this->auth = $DIC['ilAuthSession'];
+        $user = $DIC->user();
+        $rbacreview = $DIC->rbac()->review();
         $this->conf = ilSEBConfig::getInstance();
         
         $this->is_seb = $this->detectSeb($ref_id);
         
+        $is_logged_in = ($user->id && $user->id != ANONYMOUS_USER_ID);
+        
         $is_root = $rbacreview->isAssigned($user->id,SYSTEM_ROLE_ID);
-        
-        $this->is_anonymus_user = ($user->id == ANONYMOUS_USER_ID);
-        
-        $is_logged_in = ($user->id && !$this->is_anonymus_user);
         
         $role_deny = (int) $this->conf->getRoleDeny();
         
@@ -89,40 +120,48 @@ class ilSEBAccessChecker {
         }
     }
     
+    /**
+     * Delete all session information and redirect to the Access forbidden page.
+     * 
+     */
     public function exitIlias() {
         $pl = ilSEBPlugin::getInstance();
         ilSession::setClosingContext(ilSession::SESSION_CLOSE_LOGIN);
         
-        if (is_object($this->DIC['ilAuthSession']->isValid())) {
-            $this->DIC['ilAuthSession']->logout();
+        if (is_object($this->auth->isValid())) {
+            $this->auth->logout();
         }
         
         session_unset();
         session_destroy();
-        $script = "login.php?target=".$_GET["target"]."&client_id=".$_COOKIE["ilClientId"];
-        $headerTxt = $pl->txt("forbidden_header");
-        $msgTxt = $pl->txt("forbidden_message");
-        $loginTxt = $pl->txt("forbidden_login");
-        $login = "<a href=\"" . $script . "\">" . $loginTxt . "</a>";
-        $msg = file_get_contents("./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/SEB/templates/default/tpl.seb_forbidden.html");
-        $msg = str_replace("{TXT_HEADER}", $headerTxt, $msg);
-        $msg = str_replace("{TXT_MESSAGE}", $msgTxt, $msg);
-        $msg = str_replace("{LOGIN}", $login, $msg);
-        
+
+        $tpl = $pl->getTemplate('default/tpl.seb_forbidden.html');        
+        $tpl->setCurrentBlock('seb_forbidden_message');
+        $tpl->setVariable('SEB_FORBIDDEN_HEADER', $pl->txt('forbidden_header'));
+        $tpl->setVariable('SEB_FORBIDDEN_MESSAGE', $pl->txt('forbidden_message'));
+        $tpl->setVariable('SEB_LOGIN_LINK', $pl->txt('forbidden_login'));
+        $tpl->parseCurrentBlock();
         header('HTTP/1.1 403 Forbidden');
-        echo $msg;
+        echo $tpl->get();
         exit;
     }
     
+    /**
+     * Helper function. If $ref_id = 0 we check if the current seb-header contains an object key of
+     * another object.
+     *
+     * @param integer $ref_id of the repository object that the user wants to access
+     * 
+     * @return integer The type of request we are dealing with (see ilPlugin contants)
+     */
     public function detectSeb($ref_id) {
-        global $ilDB;
-        
         $server_req_header = $_SERVER[ilSEBPlugin::REQ_HEADER];
         
-        // ILIAS want to detect a valid SEB with a custom req_header and seb_key
-        // if no req_header exists in  the current request: not a seb request
+        /*
+         * We detect if we are dealing with a SEB-Browser bei analyzing a request header.
+         */
         if (!$server_req_header || $server_req_header == "") {
-            return ilSebPlugin::NOT_A_SEB_REQUEST; // not a seb request
+            return ilSebPlugin::NOT_A_SEB_REQUEST;
         } else if ($this->conf->checkSebKey($server_req_header, $this->getFullUrl())) {
             return ilSEBPlugin::SEB_REQUEST;
         } else if (!$ref_id && $this->conf->checkKeyAgainstAllObjectKeys($server_req_header, $this->getFullUrl())) {
@@ -130,15 +169,21 @@ class ilSEBAccessChecker {
         } else if ($this->conf->checkObjectKey($server_req_header, $this->getFullUrl(), $ref_id)) {
             return ilSEBPlugin::SEB_REQUEST_OBJECT_KEYS;
         } else {
-            return ilSebPlugin::NOT_A_SEB_REQUEST; // not a seb request
+            return ilSebPlugin::NOT_A_SEB_REQUEST;
         }
     }
     
+    /**
+     * We need the full url the request was sent to as it is part of the hash value in the seb-header
+     * 
+     * @return string Full Url of the request
+     */
     private function getFullUrl() {
         $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
         $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
         $protocol = substr($sp, 0, strpos($sp, "/")) . $s;
         $port = ($_SERVER["SERVER_PORT"] == "80" || $_SERVER["SERVER_PORT"] == "443") ? "" : (":".$_SERVER["SERVER_PORT"]);
+        
         return $protocol . "://" . $_SERVER['SERVER_NAME'] . $port . $_SERVER['REQUEST_URI'];
     }
 }

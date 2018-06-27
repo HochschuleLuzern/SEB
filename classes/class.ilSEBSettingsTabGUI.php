@@ -23,22 +23,25 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
+/**
+ * All needed includes
+ */
 include_once 'class.ilSEBPlugin.php';
+include_once 'class.ilSEBTabGUI.php';
 
-class ilSEBSettingsTabGUI {
-    /** @var $object ilObjComponentSettings */
-    protected $object;
-    
-    private $tpl;
-    private $pl;
+/**
+ * GUI Class to show a tab to add SEB-Keys in objects
+ * 
+ * @author Stephan Winiker <stephan.winiker@hslu.ch>
+ *
+ */
+class ilSEBSettingsTabGUI extends ilSEBTabGUI {
+	private $pl;
     private $conf;
-    private $ctrl;
     private $user;
-    private $tabs;
-    private $obj_def;
-    private $ref_id;
+    private $rbac_system;
     
-    function __construct()
+    public function __construct()
     {
         /**
          * @var $ilCtrl ilCtrl
@@ -46,42 +49,38 @@ class ilSEBSettingsTabGUI {
          * @var $ilTabs ilTabsGUI
          */
         global $DIC;
-        
-        $this->tpl = $DIC->ui()->mainTemplate();
-        $this->ctrl = $DIC->ctrl();
+		parent::__construct();
         $this->user = $DIC->user();
-        $this->tabs = $DIC->tabs();
-        $this->obj_def = $DIC['objDefinition'];
+        $this->rbac_system = $DIC->rbac()->system();
         
         $this->pl = ilSEBPlugin::getInstance();
         $this->conf = ilSEBConfig::getInstance();
         
-        $this->ref_id = $_GET['ref_id'];
-        $this->object = ilObjectFactory::getInstanceByRefId($this->ref_id);
-        
         $this->ctrl->setParameter($this, 'ref_id', $this->ref_id);
     }
-  
-    function executeCommand() {
-        $cmd = $this->ctrl->getCmd();
-        
-        switch($cmd)
-        {
-            case 'seb_settings':
-                $this->showSettings();
-                break;
-            case 'save';
-                $this->save();
-                break;
-            default:
-                $this->defaultcmd();
-        }
-        
-        
+    
+    /**
+     * We do all access checking in here and do only accept valid commands (no default)
+     *
+     */
+    public function executeCommand() {
+    	if ($this->rbac_system->checkAccess('write', $this->ref_id && (in_array(($cmd = $this->ctrl->getCmd()), ['seb_settings', 'save'])))) {
+	        switch($cmd)
+	        {
+	            case 'seb_settings':
+	                $this->showSettings();
+	                break;
+	            case 'save';
+	                $this->save();
+	                break;
+	        }
+    	} else {
+    		$this->ctrl->returnToParent($this);
+    	}
     }
     
     private function showSettings() {
-        $this->initHeader();
+        $this->setupUI();
         $form =  $this->initConfigurationForm();
         
         $this->tpl->setContent($form->getHTML());
@@ -141,35 +140,5 @@ class ilSEBSettingsTabGUI {
         $form->addItem($key_macos_txt);
         
         return $form;
-    }
-    
-    private function initHeader() {
-        global $DIC;
-        
-        /* Add breadcrumbs */
-        $DIC['ilLocator']->addRepositoryItems($this->ref_id);
-        $DIC['ilLocator']->addItem($this->object->getTitle(), 
-           $this->ctrl->getLinkTargetByClass(array(
-                'ilRepositoryGUI',
-                'ilObj' . $this->obj_def->getClassName($this->object->getType()) . 'GUI'
-                ),
-            "",
-            $this->ref_id));
-        $this->tpl->setLocator();
-        
-        /* Add title, description and icon of the current repositoryobject */
-        $this->tpl->setTitle($this->object->getTitle());
-        $this->tpl->setDescription($this->object->getDescription());
-        $this->tpl->setTitleIcon(ilUtil::getTypeIconPath($this->object->getType(), $this->object->getId(), 'big'));
-        
-        /* Create and add backlink */
-        $back_link = $this->ctrl->getLinkTargetByClass(array(
-            'ilRepositoryGUI',
-            'ilObj' . $this->obj_def->getClassName($this->object->getType()) . 'GUI'
-        ));
-        
-        $class_name = $this->obj_def->getClassName($this->object->getType());
-        $this->ctrl->setParameterByClass('ilObj' . $class_name . 'GUI', 'ref_id', $this->ref_id);
-        $this->tabs->setBackTarget($DIC->language()->txt('back'), $back_link);
     }
 }
