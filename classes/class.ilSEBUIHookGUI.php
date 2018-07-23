@@ -69,7 +69,6 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 	function getHTML($a_comp, $a_part, $a_par = array()) {
 		if (!isset(self::$_modifyGUI) && $a_par['tpl_id'] != 'tpl.main.html') {
 			global $DIC;
-			$rbacreview =  $DIC->rbac()->review();
 			$user = $DIC->user();
 			$this->setModifyGUI();
 			
