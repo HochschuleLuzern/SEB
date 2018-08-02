@@ -33,7 +33,8 @@ include_once 'class.ilSEBTabGUI.php';
  * GUI Class to show a tab to add SEB-Keys in objects
  * 
  * @author Stephan Winiker <stephan.winiker@hslu.ch>
- *
+ * 
+ * @ilCtrl_isCalledBy ilSEBSettingsTabGUI: ilRouterGUI, ilUIPluginRouterGUI
  */
 class ilSEBSettingsTabGUI extends ilSEBTabGUI {
 	private $pl;

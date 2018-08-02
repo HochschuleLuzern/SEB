@@ -41,6 +41,7 @@ include_once 'class.ilSEBSessionsTableGUI.php';
  *
  * @author Stephan Winiker <stephan.winiker@hslu.ch>
  *
+ * @ilCtrl_isCalledBy ilSEBSessionsTabGUI: ilRouterGUI, ilUIPluginRouterGUI
  */
 class ilSEBSessionsTabGUI extends ilSEBTabGUI {
     private $pl;
