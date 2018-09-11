@@ -65,7 +65,7 @@ class ilSEBSettingsTabGUI extends ilSEBTabGUI {
      *
      */
     public function executeCommand() {
-    	if ($this->rbac_system->checkAccess('write', $this->ref_id && (in_array(($cmd = $this->ctrl->getCmd()), ['seb_settings', 'save'])))) {
+    	if ($this->rbac_system->checkAccess('write', $this->ref_id) && (in_array(($cmd = $this->ctrl->getCmd()), ['seb_settings', 'save']))) {
 	        switch($cmd)
 	        {
 	            case 'seb_settings':
