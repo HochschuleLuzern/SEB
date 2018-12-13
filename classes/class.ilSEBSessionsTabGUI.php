@@ -74,7 +74,7 @@ class ilSEBSessionsTabGUI extends ilSEBTabGUI {
      * 
      */
     public function executeCommand() {
-    	if ($this->rbac_system->checkAccess('write', $this->ref_id) && (in_array(($cmd = $this->ctrl->getCmd()), ['showSessions', 'applyFilter', 'resetFilter', 'confirmDeleteSessions', 'deleteSession']))) {
+    	if ($this->rbac_system->checkAccess('write', $this->ref_id) && (in_array(($cmd = $this->ctrl->getCmd()), ['showSessions', 'applyFilter', 'resetFilter', 'confirmDeleteSessions', 'deleteSessions']))) {
 	        switch($cmd)
 	        {
 	            case 'showSessions':
