@@ -1,4 +1,4 @@
-/* Hide unused sections, where removal through the hooks creats too much overhead */
+/* Hide unused sections, where removal through the hooks creates too much overhead */
 /* hide StartupSection */
 p.ilStartupSection {
 	display:none;
@@ -116,6 +116,9 @@ div#il_startup_logo.row {
 	text-align: center;
 }
 
+#sebLogoutLink {
+    color: #F69696;
+}
 
 /* Login Section */
 
@@ -125,7 +128,7 @@ div#mainspacekeeper.container {
 }
 
 /* Some tweaks for the test */
-form[name="listofquestions"], #tst_output {
+form[name="listofquestions"], body.kiosk #tst_output {
 	position: absolute;
 	top: 95px;
 	width: 100%;
@@ -166,17 +169,16 @@ form[name="listofquestions"], #tst_output {
 
 div.ilTstQuestionSummaryBlock_WorkingTime, div.ilTstWorkingFormBlock_WorkingTime {
 	width: 100%;
-	position: fixed;
+	position: initial;
 	margin-left: 0px;
 	padding-left: 30px;
-	top: 52px;
 	left: 0px;
 	background-color: #F0F0F0;
-	text-align: left;
-	border-bottom: 1px solid;
+	text-align: center;
+	font-size: 1.1rem;
 }
 
-span.ilTstWorkingFormInfo_ProcessTimeLeft {
+div.ilTstWorkingFormInfo_ProcessTimeLeft {
 	font-size: 100%;
 	font-weight: normal;
 	text-align: left;
