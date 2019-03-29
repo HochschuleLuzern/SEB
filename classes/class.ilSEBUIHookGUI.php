@@ -250,6 +250,7 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 		
 		$tpl->setCurrentBlock("kiosk_show_participant");
 		$tpl->setVariable("PARTICIPANT_NAME", $user->getFullname());
+		$tpl->setVariable("PARTICIPANT_LOGIN", $user->getLogin());
 		
 		$link_dir = (defined("ILIAS_MODULE")) ? "../" : "";
 		
