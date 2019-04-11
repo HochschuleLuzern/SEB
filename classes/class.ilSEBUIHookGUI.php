@@ -68,12 +68,12 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 	 */
 	function getHTML($a_comp, $a_part, $a_par = array()) {
 		if (!isset(self::$_modifyGUI) && $a_par['tpl_id'] != 'tpl.main.html') {
-			global $DIC;
-			$user = $DIC->user();
 			$this->setModifyGUI();
 			
 			if (self::$_modifyGUI) {
+				global $DIC;
 				$user = $DIC->user();
+				
 				if ($user->getLanguage() != $user->getCurrentLanguage()) {
 					$user->setLanguage($user->getCurrentLanguage());
 					$user->update();
@@ -124,7 +124,9 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
     	        /*
     	         * Add Sessioncontrol Tab for SEB
     	         **/
-    	    	if ($this->conf->getActivateSessionControl() && $_GET['cmdClass'] != 'ilsebsettingstabgui') {
+    	    	if ($this->conf->getActivateSessionControl() && ($_GET['cmdClass'] != 'ilsebsettingstabgui' &&
+    	    		$_GET['cmdClass'] != 'iltestevaluationgui' &&
+    	    		!($_GET['cmdClass'] == 'iltestcorrectionsgui' && $_GET['cmd'] != 'showQuestionList'))) {
     	    		$security = ilSecuritySettings::_getInstance();
     	    		if ($security->isPreventionOfSimultaneousLoginsEnabled()) {
 	    	    		$ctrl->setParameterByClass('ilSEBSessionsTabGUI', 'ref_id', $ref_id);
@@ -139,7 +141,9 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
     	        /*
     	         * Add Settings Tab for SEB
     	         **/
-    	    	if ($this->conf->getAllowObjectKeys() && $_GET['cmdClass'] != 'ilsebsessionstabgui') {
+    	    	if ($this->conf->getAllowObjectKeys() && ($_GET['cmdClass'] != 'ilsebsessionstabgui' &&
+    	    			$_GET['cmdClass'] != 'iltestevaluationgui' &&
+    	    			!($_GET['cmdClass'] == 'iltestcorrectionsgui' && $_GET['cmd'] != 'showQuestionList'))) {
 	    	        $ctrl->setParameterByClass('ilSEBSettingsTabGUI', 'ref_id', $ref_id);
 	    	        $link = $ctrl->getLinkTargetByClass(array(
 	    	            self::STANDARD_BASE_CLASS,
