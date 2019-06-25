@@ -136,4 +136,8 @@ if ($ilDB->query("SELECT * FROM ui_uihk_seb_conf WHERE name='show_pax_pic'")->nu
 	$ilDB->insert('ui_uihk_seb_conf', $data);
 }
 ?>
+<#6>
+<?php
+$ilDB->manipulate('ALTER TABLE ui_uihk_seb_keys Modify seb_key_win VARCHAR(2000);');
+$ilDB->manipulate('ALTER TABLE ui_uihk_seb_keys Modify seb_key_macos VARCHAR(2000);');
 ?>
