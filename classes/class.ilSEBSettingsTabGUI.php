@@ -130,6 +130,7 @@ class ilSEBSettingsTabGUI extends ilSEBTabGUI {
         $key_windows_txt->setInfo($this->pl->txt('key_windows_info'));
         $key_windows_txt->setRequired(false);
         $key_windows_txt->setSize(50);
+        $key_windows_txt->setMaxLength(2000);
         $key_windows_txt->setValue($keys['seb_key_win']);
         $form->addItem($key_windows_txt);
         
@@ -137,6 +138,7 @@ class ilSEBSettingsTabGUI extends ilSEBTabGUI {
         $key_macos_txt->setInfo($this->pl->txt('key_macos_info'));
         $key_macos_txt->setRequired(false);
         $key_macos_txt->setSize(50);
+        $key_macos_txt->setMaxLength(2000);
         $key_macos_txt->setValue($keys['seb_key_macos']);
         $form->addItem($key_macos_txt);
         
