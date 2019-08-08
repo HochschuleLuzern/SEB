@@ -28,7 +28,6 @@
  *
  * The includes from ILIAS core can be removed with ILIAS5.3
  */
-include_once './Services/Table/classes/class.ilTable2GUI.php';
 include_once 'class.ilSEBPlugin.php';
 
 /**

@@ -24,13 +24,6 @@
  */
 
 /**
- * All needed includes
- *
- * The includes from ILIAS core can be removed with ILIAS5.3
- */
-include_once 'Services/Repository/classes/class.ilRepositoryExplorer.php';
-
-/**
  * Abstract GUI class implementing the shared functionality for the tabs in the SEB plugin
  * 
  * @author Stephan Winiker <stephan.winiker@hslu.ch>

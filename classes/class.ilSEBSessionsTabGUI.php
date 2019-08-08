@@ -28,10 +28,6 @@
  * 
  * The includes from ILIAS core can be removed with ILIAS5.3
  */
-include_once './Modules/Test/classes/class.ilTestParticipantData.php';
-include_once './Modules/Test/classes/class.ilObjTest.php';
-include_once './Services/User/classes/class.ilObjUser.php';
-include_once './Services/Authentication/classes/class.ilSession.php';
 include_once 'class.ilSEBPlugin.php';
 include_once 'class.ilSEBTabGUI.php';
 include_once 'class.ilSEBSessionsTableGUI.php';

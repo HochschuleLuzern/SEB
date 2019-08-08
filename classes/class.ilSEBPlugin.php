@@ -23,8 +23,6 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
-include_once("./Services/UIComponent/classes/class.ilUserInterfaceHookPlugin.php");
-
 class ilSEBPlugin extends ilUserInterfaceHookPlugin
 {
 	const NOT_A_SEB_REQUEST = 0;

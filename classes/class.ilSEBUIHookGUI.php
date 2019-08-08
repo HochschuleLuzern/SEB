@@ -26,11 +26,6 @@
 /**
  * All needed includes
  */
-include_once './Services/UIComponent/classes/class.ilUIHookPluginGUI.php';
-include_once './Services/Object/classes/class.ilObject.php';
-include_once './Services/Init/classes/class.ilStartUpGUI.php';
-include_once './Services/MainMenu/classes/class.ilMainMenuGUI.php';
-include_once './Services/PrivacySecurity/classes/class.ilSecuritySettings.php';
 include_once 'class.ilSEBPlugin.php';
 include_once 'class.ilSEBConfig.php';
 include_once 'class.ilSEBAccessChecker.php';

@@ -22,9 +22,6 @@
  * Schneider that can be found on Github
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
-
-include_once './Services/Component/classes/class.ilPluginConfigGUI.php';
-include_once './Services/PrivacySecurity/classes/class.ilSecuritySettings.php';
 include_once 'class.ilSEBPlugin.php';
 include_once 'class.ilSEBConfig.php';
 
