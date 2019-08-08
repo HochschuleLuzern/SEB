@@ -124,9 +124,9 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
     	        /*
     	         * Add Sessioncontrol Tab for SEB
     	         **/
-    	    	if ($this->conf->getActivateSessionControl() && ($_GET['cmdClass'] != 'ilsebsettingstabgui' &&
-    	    		$_GET['cmdClass'] != 'iltestevaluationgui' &&
-    	    		!($_GET['cmdClass'] == 'iltestcorrectionsgui' && $_GET['cmd'] != 'showQuestionList'))) {
+    	    	if ($this->conf->getActivateSessionControl() && 
+    	    		!in_array($_GET['cmdClass'], ['ilsebsettingstabgui', 'iltestevaluationgui', 'ilobjectactivationgui']) &&
+    	    		!($_GET['cmdClass'] == 'iltestcorrectionsgui' && $_GET['cmd'] != 'showQuestionList')) {
     	    		$security = ilSecuritySettings::_getInstance();
     	    		if ($security->isPreventionOfSimultaneousLoginsEnabled()) {
 	    	    		$ctrl->setParameterByClass('ilSEBSessionsTabGUI', 'ref_id', $ref_id);
@@ -141,9 +141,9 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
     	        /*
     	         * Add Settings Tab for SEB
     	         **/
-    	    	if ($this->conf->getAllowObjectKeys() && ($_GET['cmdClass'] != 'ilsebsessionstabgui' &&
-    	    			$_GET['cmdClass'] != 'iltestevaluationgui' &&
-    	    			!($_GET['cmdClass'] == 'iltestcorrectionsgui' && $_GET['cmd'] != 'showQuestionList'))) {
+    	    	if ($this->conf->getAllowObjectKeys() && 
+    	    			!in_array($_GET['cmdClass'], ['ilsebsessionstabgui', 'iltestevaluationgui', 'ilobjectactivationgui']) &&
+    	    			!($_GET['cmdClass'] == 'iltestcorrectionsgui' && $_GET['cmd'] != 'showQuestionList')) {
 	    	        $ctrl->setParameterByClass('ilSEBSettingsTabGUI', 'ref_id', $ref_id);
 	    	        $link = $ctrl->getLinkTargetByClass(array(
 	    	            self::STANDARD_BASE_CLASS,
