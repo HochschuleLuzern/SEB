@@ -13,10 +13,10 @@ This plugin is a completely refactored fork of the SEB plugin developed by Stefa
 
 
 **Minimum ILIAS Version:**
-5.2.0
+5.4.0
 
 **Maximum ILIAS Version:**
-5.3.999
+5.4.999
 
 **Responsible Developer:**
 Stephan Winiker - stephan.winiker@hslu.ch
