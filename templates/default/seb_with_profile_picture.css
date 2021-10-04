@@ -1,0 +1,23 @@
+.il-logo  a:first-child {
+	align-self: flex-start;
+}
+.il-logo img {
+	height: 130px;
+}
+
+div.il_HeaderInner.media {
+    padding-left: 160px;
+}
+
+.il-system-info-content {
+	padding-left: 150px;
+}
+
+@media only screen and (max-width: 768px) {
+	.il-logo img {
+		height: initial;
+		max-height: 130px;
+		min-height: 45px;
+		min-width: 45px;
+	}
+}

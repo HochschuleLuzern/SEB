@@ -23,10 +23,17 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
-class ilSEBConfig {    
-    private static $instance;
+class ilSEBConfig {
     private $conf;
     private $db;
+    
+    public function __construct() {
+        global $DIC;
+        $this->db = $DIC->database();
+        if ($this->db->tableExists('ui_uihk_seb_conf')) {
+            $this->readSEBConf();
+        }
+    }
     
     public function checkSebKey($key, $url) {
         return $this->checkKeys($key, $this->conf['seb_keys'], $url);
@@ -52,8 +59,8 @@ class ilSEBConfig {
     	return $this->conf['activate_session_control'];
     }
     
-    public function getShowPaxPic() {
-    	return $this->conf['show_pax_pic'];
+    public function getShowPaxPic() : bool {
+    	return (bool) $this->conf['show_pax_pic'];
     }
     
     /**
@@ -123,22 +130,6 @@ class ilSEBConfig {
             }
             
         }
-    }
-    
-    private function __construct() {
-        global $DIC;
-        $this->db = $DIC->database();
-        if ($this->db->tableExists('ui_uihk_seb_conf')) {
-            $this->readSEBConf();
-        }
-    }
-    
-    public static function getInstance() {
-        if (! isset(self::$instance)) {
-            self::$instance = new self();
-        }
-        
-        return self::$instance;
     }
     
     /**

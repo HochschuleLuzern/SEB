@@ -22,8 +22,6 @@
  * Schneider that can be found on Github
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
-include_once 'class.ilSEBPlugin.php';
-include_once 'class.ilSEBConfig.php';
 
 class ilSEBConfigGUI extends ilPluginConfigGUI {
 	private $pl;
@@ -41,7 +39,7 @@ class ilSEBConfigGUI extends ilPluginConfigGUI {
 			    global $DIC;
 			    $this->DIC = &$DIC;
 			    $this->pl = $this->getPluginObject();
-			    $this->config = ilSEBConfig::getInstance();
+			    $this->config = new ilSEBConfig();
 				$this->$cmd();
 				break;
 

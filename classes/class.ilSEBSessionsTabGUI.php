@@ -23,11 +23,6 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
-/**
- * All needed includes
- * 
- * The includes from ILIAS core can be removed with ILIAS5.3
- */
 include_once 'class.ilSEBPlugin.php';
 include_once 'class.ilSEBTabGUI.php';
 include_once 'class.ilSEBSessionsTableGUI.php';
@@ -59,8 +54,8 @@ class ilSEBSessionsTabGUI extends ilSEBTabGUI {
         $this->db = $DIC->database();
         $this->rbac_system = $DIC->rbac()->system();
         
-        $this->pl = ilSEBPlugin::getInstance();
-        $this->conf = ilSEBConfig::getInstance();
+        $this->pl = new ilSEBPlugin();
+        $this->conf = new ilSEBConfig();
         
         $this->ctrl->setParameter($this, 'ref_id', $this->ref_id);
     }
@@ -161,7 +156,7 @@ class ilSEBSessionsTabGUI extends ilSEBTabGUI {
      * @param string $action One of 'confirmDeleteSessions' if you want to show the participant table or 'deleteSessions' if a list of sessions should be shown for confirmation 
      */
     private function initSessionTable($users, $action) {
-	    $sessions_table = new ilSEBSessionsTableGUI($this, $action);
+	    $sessions_table = new ilSEBSessionsTableGUI($this, $action, $this->pl);
     	$sessions_table->setData($users);
     	
     	if (isset($_GET['_table_nav'])) {
@@ -175,8 +170,7 @@ class ilSEBSessionsTabGUI extends ilSEBTabGUI {
     	}
     	
     	$this->tpl->setContent($sessions_table->getHTML());
-    	$this->tpl->getStandardTemplate();
-    	$this->tpl->show();
+    	$this->tpl->printToStdOut();
     }
     
     /**

@@ -1,7 +1,3 @@
-// 
-// German Language File for SEB Plugin
-//
- 
 <!-- language file start -->
 config#:#Konfiguration
 req_header#:#Request Header
@@ -49,3 +45,4 @@ show_pax_pic_info#:#Wenn diese Option aktiviert ist, wird während des Tests rec
 no_sessions_selected#:#Sie müssen mindestens eine Session auswählen, um diese zu entfernen.
 sessions_deleted#:#Die Session(s) wurden entfernt.
 title_delete_sessions_table#:#Die folgenden Session(s) werden entfernt und die entsprechenden Teilnehmer/innen ausgeloggt.
+exam_id#:#Prüfungsnr.

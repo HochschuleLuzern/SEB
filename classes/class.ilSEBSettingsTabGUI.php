@@ -54,8 +54,8 @@ class ilSEBSettingsTabGUI extends ilSEBTabGUI {
         $this->user = $DIC->user();
         $this->rbac_system = $DIC->rbac()->system();
         
-        $this->pl = ilSEBPlugin::getInstance();
-        $this->conf = ilSEBConfig::getInstance();
+        $this->pl = new ilSEBPlugin();
+        $this->conf = new ilSEBConfig();
         
         $this->ctrl->setParameter($this, 'ref_id', $this->ref_id);
     }
@@ -85,8 +85,7 @@ class ilSEBSettingsTabGUI extends ilSEBTabGUI {
         $form =  $this->initConfigurationForm();
         
         $this->tpl->setContent($form->getHTML());
-        $this->tpl->getStandardTemplate();
-        $this->tpl->show();
+        echo $this->tpl->printToStdOut();
     }
     
     private function save() {
@@ -109,20 +108,16 @@ class ilSEBSettingsTabGUI extends ilSEBTabGUI {
         } else {
             $form->setValuesByPost();
             $this->tpl->setContent($form->getHTML());
-            $this->tpl->show();
+            $this->tpl->printToStdOut();
         }
     }
     
     private function initConfigurationForm() {
-        include_once('Services/Form/classes/class.ilPropertyFormGUI.php');
-        
-        global $DIC;
-        
         $form = new ilPropertyFormGUI();
         $form->setFormAction($this->ctrl->getFormActionByClass('ilSEBSettingsTabGUI', 'save'));
         $form->setTitle($this->pl->txt('title_settings_form'));
         $form->setDescription($this->pl->txt('description_settings_form'));
-        $form->addCommandButton('save', $DIC->language()->txt('save'));
+        $form->addCommandButton('save', $this->lang->txt('save'));
         
         $keys = $this->conf->getObjectKeys($this->ref_id);
         

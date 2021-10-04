@@ -42,12 +42,12 @@ class ilSEBSessionsTableGUI extends ilTable2GUI
     private $lang;
     private $hide_checkbox = false;
     
-    public function __construct($object_gui, $cmd)
+    public function __construct(ilSEBSessionsTabGUI $object_gui, String $cmd, ilSEBPlugin $plugin)
     {
     	global $DIC;
     	
     	parent::__construct($object_gui, $cmd);
-    	$this->plugin = ilSEBPlugin::getInstance();
+    	$this->plugin = $plugin;
     	$this->lang = $DIC->language();
     	
     	$this->setRowTemplate('tpl.seb_sessions_table_row.html', 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/SEB/');

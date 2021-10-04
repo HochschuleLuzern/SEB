@@ -23,6 +23,9 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
+include 'class.ilSEBGlobalScreenModificationProvider.php';
+include 'class.ilSEBConfig.php';
+
 class ilSEBPlugin extends ilUserInterfaceHookPlugin
 {
 	const NOT_A_SEB_REQUEST = 0;
@@ -36,19 +39,78 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
 	const CACHE = 'SEB_CONFIG_CACHE';
 	const REQ_HEADER = 'HTTP_X_SAFEEXAMBROWSER_REQUESTHASH';
 	
-	private static $instance;
+	private static $forbidden = false;
+	private static $kioskmode_checked = false;
 	
-	public static function getInstance() {
-	    if (isset(self::$instance)) {
-	        return self::$instance;
-	    } else {
-	        self::$instance = new self;
-	        return self::$instance;
+	private $access_checker;
+	
+	private $seb_config;
+	
+	private $current_ref_id;
+	
+	public function __construct() {
+	    parent::__construct();
+	    
+	    /*
+	     * This is ugly, but we need this to avoid an endless loop when redirecting to the "Forbidden"-Page
+	     * See the Comment below for the one and only place this MUST be set.
+	     */
+	    if (self::$forbidden) {
+	        return;
+	    }
+	    
+	    global $DIC;
+	    
+	    $this->current_ref_id = (int) $DIC->http()->request()->getQueryParams()['ref_id'];
+	    
+	    $this->seb_config = new ilSEBConfig();
+	    
+	    $this->access_checker = new ilSEBAccessChecker($this->getCurrentRefId(), 
+	        $DIC->user(), 
+	        $DIC['ilAuthSession'], 
+	        $DIC->rbac()->review(),
+	        $this->seb_config);
+	    
+	    if ($this->access_checker->denyWithoutSeb()) {
+	        /*
+	         * This is ugly, but we need this to avoid an endless loop when redirecting to the "Forbidden"-Page
+	         * This is the one and only place this MUST be set.
+	         */
+	        self::$forbidden = true;
+	        
+	        $this->access_checker->exitIlias(
+	               $this
+	            );
+	    }
+	    
+	    if (!self::$kioskmode_checked && $DIC->ctrl()->getContextObjType() == 'tst') {
+	        $test = new ilObjTest($this->getCurrentRefId());
+	        if ($test->getKioskMode() === true) {
+	            $test->setKioskMode();
+	            $test->saveToDb();
+	        }
+	        
+	        self::$kioskmode_checked = true;
+	    }
+	    
+	    if ($this->access_checker->isSwitchToSebSkinNeeded() &&
+	        (self::$kioskmode_checked ||
+	        $DIC->ctrl()->getContextObjType() != 'tst')) {
+    	    $this->provider_collection
+	       ->setModificationProvider(new ilSEBGlobalScreenModificationProvider($DIC, $this));
 	    }
 	}
 	
-	function getPluginName() {
+	public function getPluginName() : string {
 		return "SEB";
+	}
+	
+	public function getCurrentRefId() : int {
+	    return $this->current_ref_id;
+	}
+	
+	public function isShowParticipantPicture() : bool {
+	    return $this->seb_config->getShowPaxPic();
 	}
 }
 

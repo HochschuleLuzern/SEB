@@ -24,13 +24,6 @@
  */
 
 /**
- * All needed includes
- */
-include_once 'class.ilSEBPlugin.php';
-include_once 'class.ilSEBConfig.php';
-include_once 'class.ilSEBAccessChecker.php';
-
-/**
  * GUI-Plugin Class to add functionality to only allow visitors on a Safe Exam Browser to this ILIAS-Instance and to offer
  * the corresponding setting functionality
  *
@@ -47,52 +40,8 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI {
 	private $conf;
 	
 	public function __construct() {
-	    $this->plugin = ilSEBPlugin::getInstance();
-	    $this->conf = ilSEBConfig::getInstance();
-	}
-		
-	/**
-	 * Remove breadcrumb, left and right column on personal desktop, right column on all objects, footer and tabs and apply additional changes in
-	 * switchToKiosk (dependent on the object type we are in)
-	 *
-	 * @param string $a_comp Component
-	 * @param string $a_part String that identifies the part of the UI that is handled
-	 * @param string $a_par array of parameters (depend on $a_comp and $a_part)
-	 *
-	 * @return array Array defining the changes to be applied to the template of the current part ("mode" => modification mode, "html" => your html)
-	 */
-	function getHTML($a_comp, $a_part, $a_par = array()) {
-		if (!isset(self::$_modifyGUI) && $a_par['tpl_id'] != 'tpl.main.html') {
-			$this->setModifyGUI();
-			
-			if (self::$_modifyGUI) {
-				global $DIC;
-				$user = $DIC->user();
-				
-				if ($user->getLanguage() != $user->getCurrentLanguage()) {
-					$user->setLanguage($user->getCurrentLanguage());
-					$user->update();
-				}
-			}
-		}
-		
-		if (!self::$_modifyGUI) {
-			return array("mode" => ilUIHookPluginGUI::KEEP, "html" => "");
-		} else if ($a_comp == "Services/MainMenu" ||
-				$a_comp == "Services/Locator" && $a_part == "main_locator" ||
-				$a_comp == "Services/PersonalDesktop" && $a_part == "left_column" ||
-				$a_comp == "Services/PersonalDesktop" && $a_part == "right_column" ||
-				$a_comp == "Services/Container" && $a_part == "right_column" ||
-				$a_part == "template_get" && $a_par['tpl_id'] == "Services/UICore/tpl.footer.html" ||
-				$a_part == "template_get" && $a_par['tpl_id'] == "Services/UIComponent/Tabs/tpl.tabs.html") {
-			return array("mode" => ilUIHookPluginGUI::REPLACE, "html" => "");
-		} else if ($a_part == "template_get" && $a_par['tpl_id'] == 'Services/MainMenu/tpl.main_menu.html') {
-			return array('mode' => ilUIHookPluginGUI::REPLACE, 'html' => $this->switchToKiosk());
-		} else if ($a_part == "template_get" && $a_par['tpl_id'] == 'Modules/Test/tpl.il_as_tst_kiosk_head.html') {
-			return array('mode' => ilUIHookPluginGUI::REPLACE, 'html' => $this->switchToKiosk(true));
-		}
-				
-		return array("mode" => ilUIHookPluginGUI::KEEP, "html" => "");
+	    $this->plugin = new ilSEBPlugin();
+	    $this->conf = new ilSEBConfig();
 	}
 	
 	/**

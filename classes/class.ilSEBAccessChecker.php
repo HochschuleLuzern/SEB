@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2017 Hochschule Luzern
  *
@@ -22,64 +22,23 @@
  * Schneider that can be found on Github
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
-
-include_once("class.ilSEBPlugin.php");
-include_once("class.ilSEBConfig.php");
-
 class ilSEBAccessChecker {
     private $conf;
     private $auth;
     
-    /*
-     * Getter Functions
-     */
-    
-    /**
-     * Is the browser accessing ILIAS a Safe Exam Browser?
-     * 
-     * @var integer
-     */
     private $is_seb;
-    
-    /**
-     * Is the browser accessing ILIAS a Safe Exam Browser?
-     * 
-     * @return integer See constants in ilSEBPlugin
-     */
-    public function isSeb() {
+    public function isSeb() : bool {
         return $this->is_seb;
     }
     
-    /**
-     * Is the browser accessing ILIAS a Safe Exam Browser?
-     *
-     * @var boolean
-     */
-    private $needs_seb;
-    
-    /**
-     * Is the browser accessing ILIAS a Safe Exam Browser?
-     *
-     * @return boolean
-     */
-    public function getNeedsSeb() {
-        return $this->needs_seb;
+    private $deny_without_seb;
+    public function denyWithoutSeb() : bool {
+        return $this->deny_without_seb;
     }
     
-    /**
-     * To we need to switch to kiosk/seb template
-     *
-     * @var boolean
-     */
-    private $switch_to_seb_skin;
-    
-    /**
-     * To we need to switch to kiosk/seb template
-     *
-     * @return boolean
-     */
-    public function getSwitchToSebSkin() {
-        return $this->switch_to_seb_skin;
+    private $switch_to_seb_skin_needed;
+    public function isSwitchToSebSkinNeeded() : bool {
+        return $this->switch_to_seb_skin_needed;
     }
     
     /**
@@ -87,12 +46,14 @@ class ilSEBAccessChecker {
      * 
      * @param integer $ref_id of the repository object that the user wants to access
      */
-    public function __construct($ref_id) {
-        global $DIC;
-        $this->auth = $DIC['ilAuthSession'];
-        $user = $DIC->user();
-        $rbacreview = $DIC->rbac()->review();
-        $this->conf = ilSEBConfig::getInstance();
+    public function __construct(int $ref_id,
+        \ilObjUser $user, 
+        \ilAuthSession $auth, 
+        \ilRbacReview $rbacreview,
+        \ilSEBConfig $conf) {
+        
+        $this->auth = $auth;
+        $this->conf = $conf;
         
         $this->is_seb = $this->detectSeb($ref_id);
         
@@ -105,61 +66,46 @@ class ilSEBAccessChecker {
         // check role deny
         if ($is_logged_in && $role_deny && !$is_root) {
             // check access
-            $this->needs_seb = ($role_deny == 1 || $rbacreview->isAssigned($user->id,$role_deny));
+            $this->deny_without_seb = ($role_deny == 1 || $rbacreview->isAssigned($user->id,$role_deny));
         } else {
-            $this->needs_seb = false;
+            $this->deny_without_seb = false;
         }
                 
         // check if a switch to the seb skin is needed
         $is_kiosk_user = (($this->conf->getRoleKiosk() == 1 || $rbacreview->isAssigned($user->id,$this->conf->getRoleKiosk())) && !$is_root);
         
         if ($is_logged_in && $is_kiosk_user) {
-            $this->switch_to_seb_skin = true;
+            $this->switch_to_seb_skin_needed = true;
         } else {
-            $this->switch_to_seb_skin = false;
+            $this->switch_to_seb_skin_needed = false;
         }
     }
     
-    /**
-     * Delete all session information and redirect to the Access forbidden page.
-     * 
-     */
-    public function exitIlias() {
-        $pl = ilSEBPlugin::getInstance();
+    public function exitIlias(\ilSEBPlugin $pl) {
         ilSession::setClosingContext(ilSession::SESSION_CLOSE_LOGIN);
         
-        if (is_object($this->auth->isValid())) {
+        if ($this->auth->isValid()) {
             $this->auth->logout();
         }
         
         session_unset();
         session_destroy();
-
-        $tpl = $pl->getTemplate('default/tpl.seb_forbidden.html');        
+        
+        header('HTTP/1.1 403 Forbidden');
+            
+        $tpl = $pl->getTemplate('default/tpl.seb_forbidden.html');
         $tpl->setCurrentBlock('seb_forbidden_message');
         $tpl->setVariable('SEB_FORBIDDEN_HEADER', $pl->txt('forbidden_header'));
         $tpl->setVariable('SEB_FORBIDDEN_MESSAGE', $pl->txt('forbidden_message'));
         $tpl->setVariable('SEB_LOGIN_LINK', $pl->txt('forbidden_login'));
         $tpl->parseCurrentBlock();
-        header('HTTP/1.1 403 Forbidden');
         echo $tpl->get();
         exit;
     }
     
-    /**
-     * Helper function. If $ref_id = 0 we check if the current seb-header contains an object key of
-     * another object.
-     *
-     * @param integer $ref_id of the repository object that the user wants to access
-     * 
-     * @return integer The type of request we are dealing with (see ilPlugin contants)
-     */
-    public function detectSeb($ref_id) {
+    public function detectSeb(int $ref_id) : int {
         $server_req_header = $_SERVER[ilSEBPlugin::REQ_HEADER];
         
-        /*
-         * We detect if we are dealing with a SEB-Browser bei analyzing a request header.
-         */
         if (!$server_req_header || $server_req_header == "") {
             return ilSebPlugin::NOT_A_SEB_REQUEST;
         } else if ($this->conf->checkSebKey($server_req_header, $this->getFullUrl())) {
@@ -175,10 +121,8 @@ class ilSEBAccessChecker {
     
     /**
      * We need the full url the request was sent to as it is part of the hash value in the seb-header
-     * 
-     * @return string Full Url of the request
      */
-    private function getFullUrl() {
+    private function getFullUrl() : string {
         $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
         $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
         $protocol = substr($sp, 0, strpos($sp, "/")) . $s;
