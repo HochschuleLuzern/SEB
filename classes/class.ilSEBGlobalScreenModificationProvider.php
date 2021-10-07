@@ -3,17 +3,17 @@
  * Copyright (c) 2017 Hochschule Luzern
  *
  * This file is part of the SEB-Plugin for ILIAS.
- 
+
  * SEB-Plugin for ILIAS is free software: you can redistribute
  * it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- 
+
  * SEB-Plugin for ILIAS is distributed in the hope that
  * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with SEB-Plugin for ILIAS.  If not,
  * see <http://www.gnu.org/licenses/>.
@@ -41,36 +41,40 @@ use ILIAS\GlobalScreen\Scope\Layout\Factory\LogoModification;
 use ILIAS\GlobalScreen\Scope\Layout\Factory\TitleModification;
 
 class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginProvider
-{   
+{
     public function isInterestedInContexts() : ContextCollection
     {
         return $this->context_collection->main();
     }
 
     public function getMainBarModification(CalledContexts $screen_context_stack) : ?MainBarModification
-    {        
+    {
         return $this->dic->globalScreen()->layout()->factory()->mainbar()->withModification(
-            function (MainBar $current = Null) : ?MainBar {
+            function (MainBar $current = null) : ?MainBar {
                 $empty_mainbar = $this->dic->ui()->factory()->mainControls()->mainBar();
                 $this->addCSS();
                 return $empty_mainbar;
-            })->withHighPriority();
+            }
+        )->withHighPriority();
     }
     
-    public function getMetaBarModification(CalledContexts $screen_context_stack) : ?MetaBarModification {
+    public function getMetaBarModification(CalledContexts $screen_context_stack) : ?MetaBarModification
+    {
         return $this->dic->globalScreen()->layout()->factory()->metabar()->withModification(
-            function (MetaBar $current = Null) : MetaBar {
+            function (MetaBar $current = null) : MetaBar {
                 $empty_metabar = $current->withClearedEntries();
                 if (!$this->isTestRunning()) {
                     $empty_metabar = $this->withLanguageAndLogout($empty_metabar);
                 }
                 return $empty_metabar;
-            })->withHighPriority();
+            }
+        )->withHighPriority();
     }
     
-    public function getLogoModification(CalledContexts $screen_context_stack) : ?LogoModification {
+    public function getLogoModification(CalledContexts $screen_context_stack) : ?LogoModification
+    {
         return $this->dic->globalScreen()->layout()->factory()->logo()->withModification(
-            function (Image $current = Null) : ?Image {
+            function (Image $current = null) : ?Image {
                 $logo_path = './Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/SEB/templates/images/HeaderIcon.png';
                 $logo_alt = 'SEB Logo';
                 if ($this->plugin->isShowParticipantPicture()) {
@@ -82,35 +86,42 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
 
                 $image = $this->withLogoAction($image);
                 return $image;
-            })->withHighPriority();
+            }
+        )->withHighPriority();
     }
     
-    public function getTitleModification(CalledContexts $screen_context_stack) : ?TitleModification {
+    public function getTitleModification(CalledContexts $screen_context_stack) : ?TitleModification
+    {
         return $this->dic->globalScreen()->layout()->factory()->title()->withModification(
-            function (String $current = Null) : string {
+            function (String $current = null) : string {
                 $title_object = $this->initializeHeaderTitleObject();
                 return $title_object->getParsedTitleString();
-            })->withHighPriority();
+            }
+        )->withHighPriority();
     }
     
     public function getBreadCrumbsModification(CalledContexts $screen_context_stack) : ?BreadCrumbsModification
     {
         return $this->dic->globalScreen()->layout()->factory()->breadcrumbs()->withModification(
-            function (Breadcrumbs $current = Null) : ?Breadcrumbs {
+            function (Breadcrumbs $current = null) : ?Breadcrumbs {
                 return null;
-            })->withHighPriority();
+            }
+        )->withHighPriority();
     }
     
-    public function getFooterModification(CalledContexts $screen_context_stack) : ?FooterModification {
+    public function getFooterModification(CalledContexts $screen_context_stack) : ?FooterModification
+    {
         return $this->dic->globalScreen()->layout()->factory()->footer()->withModification(
-            function (Footer $current = Null) : ?Footer {
+            function (Footer $current = null) : ?Footer {
                 return $this->dic->ui()->factory()->mainControls()->footer([], '');
-            })->withHighPriority();
+            }
+        )->withHighPriority();
     }
     
-    private function initializeHeaderTitleObject() : ilSEBHeaderTitleObject {
+    private function initializeHeaderTitleObject() : ilSEBHeaderTitleObject
+    {
         $title_object = new ilSEBHeaderTitleObject($this->plugin, $this->dic->user());
-        if ($this->plugin->getCurrentRefId() !=  0) {
+        if ($this->plugin->getCurrentRefId() != 0) {
             $object = ilObjectFactory::getInstanceByRefId($this->plugin->getCurrentRefId());
             $title_object = $title_object->withObject($object);
         }
@@ -118,7 +129,8 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
         return $title_object;
     }
     
-    private function isTestRunning() : bool {
+    private function isTestRunning() : bool
+    {
         if ($this->dic->ctrl()->getContextObjType() != 'tst') {
             return false;
         }
@@ -127,15 +139,16 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
         $testSession = new ilTestSession();
         $testSession->loadTestSession($object->getTestId(), $this->dic->user()->getId());
 
-        if ($testSession->getActiveId() == 0 || 
+        if ($testSession->getActiveId() == 0 ||
             $testSession->getLastStartedPass() === $testSession->getLastFinishedPass()) {
-                return false;
+            return false;
         }
         
         return true;
     }
     
-    private function withLanguageAndLogout(MetaBar $meta_bar) : MetaBar {
+    private function withLanguageAndLogout(MetaBar $meta_bar) : MetaBar
+    {
         $f = $this->dic->ui()->factory();
         
         $user = $this->dic->user();
@@ -162,7 +175,8 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
         return $meta_bar->withAdditionalEntry('logout', $logout_entry);
     }
     
-    private function getEntriesForAvailableLanguages() {
+    private function getEntriesForAvailableLanguages()
+    {
         $f = $this->dic->ui()->factory();
         $languages = $this->dic->language()->getInstalledLanguages();
         $language_selection = [];
@@ -182,7 +196,8 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
         return $language_selection;
     }
     
-    private function withLogoAction(Image $image) : Image {
+    private function withLogoAction(Image $image) : Image
+    {
         $url = ilUserUtil::getStartingPointAsUrl();
         if (!$url) {
             $url = "./goto.php?target=root_1";
@@ -213,7 +228,8 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
         return preg_replace("/&*lang=[a-z]{2}&*/", "", $base);
     }
     
-    private function addCSS() {
+    private function addCSS()
+    {
         $this->dic->ui()->mainTemplate()->addCss($this->plugin->getStyleSheetLocation('default/seb.css'));
         
         if ($this->plugin->isShowParticipantPicture()) {

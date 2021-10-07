@@ -1,19 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Copyright (c) 2017 Hochschule Luzern
  *
  * This file is part of the SEB-Plugin for ILIAS.
- 
+
  * SEB-Plugin for ILIAS is free software: you can redistribute
  * it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- 
+
  * SEB-Plugin for ILIAS is distributed in the hope that
  * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- 
+
  * You should have received a copy of the GNU General Public License
  * along with SEB-Plugin for ILIAS.  If not,
  * see <http://www.gnu.org/licenses/>.
@@ -23,72 +23,41 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
-/**
- * All needed includes
- */
 include_once 'class.ilSEBPlugin.php';
 include_once 'class.ilSEBTabGUI.php';
 
 /**
- * GUI Class to show a tab to add SEB-Keys in objects
- * 
- * @author Stephan Winiker <stephan.winiker@hslu.ch>
- * 
  * @ilCtrl_isCalledBy ilSEBSettingsTabGUI: ilRouterGUI, ilUIPluginRouterGUI
  */
-class ilSEBSettingsTabGUI extends ilSEBTabGUI {
-	private $pl;
-    private $conf;
-    private $user;
-    private $rbac_system;
-    
-    public function __construct()
+class ilSEBSettingsTabGUI extends ilSEBTabGUI
+{
+    public function executeCommand() : void
     {
-        /**
-         * @var $ilCtrl ilCtrl
-         * @var $ilUser ilObjUser
-         * @var $ilTabs ilTabsGUI
-         */
-        global $DIC;
-		parent::__construct();
-        $this->user = $DIC->user();
-        $this->rbac_system = $DIC->rbac()->system();
-        
-        $this->pl = new ilSEBPlugin();
-        $this->conf = new ilSEBConfig();
-        
-        $this->ctrl->setParameter($this, 'ref_id', $this->ref_id);
+        if ($this->rbac_system->checkAccess('write', $this->ref_id) && (in_array(($cmd = $this->ctrl->getCmd()), ['seb_settings', 'save']))) {
+            switch ($cmd) {
+                case 'seb_settings':
+                    $this->showSettings();
+                    break;
+                case 'save':
+                    $this->save();
+                    break;
+            }
+        } else {
+            $this->ctrl->returnToParent($this);
+        }
     }
     
-    /**
-     * We do all access checking in here and do only accept valid commands (no default)
-     *
-     */
-    public function executeCommand() {
-    	if ($this->rbac_system->checkAccess('write', $this->ref_id) && (in_array(($cmd = $this->ctrl->getCmd()), ['seb_settings', 'save']))) {
-	        switch($cmd)
-	        {
-	            case 'seb_settings':
-	                $this->showSettings();
-	                break;
-	            case 'save';
-	                $this->save();
-	                break;
-	        }
-    	} else {
-    		$this->ctrl->returnToParent($this);
-    	}
-    }
-    
-    private function showSettings() {
+    private function showSettings() : void
+    {
         $this->setupUI();
-        $form =  $this->initConfigurationForm();
+        $form = $this->initConfigurationForm();
         
         $this->tpl->setContent($form->getHTML());
         echo $this->tpl->printToStdOut();
     }
     
-    private function save() {
+    private function save() : void
+    {
         $form = $this->initConfigurationForm();
         
         if ($form->checkInput()) {
@@ -99,9 +68,9 @@ class ilSEBSettingsTabGUI extends ilSEBTabGUI {
             
             if ($success < 0) {
                 ilUtil::sendFailure($this->pl->txt("save_failure"), true);
-            } else if ($success == 0) {
+            } elseif ($success == 0) {
                 ilUtil::sendInfo($this->pl->txt("nothing_changed"), true);
-            }else {
+            } else {
                 ilUtil::sendSuccess($this->pl->txt("save_success"), true);
             }
             $this->showSettings();
@@ -112,7 +81,8 @@ class ilSEBSettingsTabGUI extends ilSEBTabGUI {
         }
     }
     
-    private function initConfigurationForm() {
+    private function initConfigurationForm() : ilPropertyFormGUI
+    {
         $form = new ilPropertyFormGUI();
         $form->setFormAction($this->ctrl->getFormActionByClass('ilSEBSettingsTabGUI', 'save'));
         $form->setTitle($this->pl->txt('title_settings_form'));

@@ -1,23 +1,19 @@
 /* Hide unused sections, where removal through the hooks creates too much overhead */
 /* hide StartupSection */
-p.ilStartupSection {
-	display:none;
-}
-
-.ilContentFixed button {
+p.ilStartupSection, .ilContentFixed button, .breadcrumbs, .nav.il-maincontrols,
+.osdNotificationContainer, .ilInfoScreenSec .il_InfoScreenPropertyValue a[href="#"] {
 	display: none;
 }
 
-.breadcrumbs {
-	display:none;
+/* Modify the grid to make it work without the breadcrumbs, ...otherwise it looks ugly */
+.il-layout-page {
+	grid-template-rows: 60px auto 0px 1fr;
 }
 
-.nav.il-maincontrols {
-    display: none;
-}
-
-.ilInfoScreenSec .il_InfoScreenPropertyValue a[href="#"] {
-	display: none;
+@media only screen and (max-width: 768px) {
+	.il-layout-page {
+    	grid-template-rows: 45px auto 1fr;
+	}
 }
 
 /* Using a fixed MainHeader with an user image and some options in kioskmode a kioskOption header */
@@ -42,91 +38,6 @@ p.ilStartupSection {
 
 .il-metabar-slates {
 	color: initial;
-}
-
-div#il_startup_logo.row {
-	height: 52px;
-	padding: 0;
-	margin-right:0;
-	margin-left:0;
-}
-/* Login Section */
-
-div#mainspacekeeper.container {
-	margin-top: 0px;
-	padding-top: 70px;
-}
-
-/* Some tweaks for the test */
-form[name="listofquestions"], body.kiosk #tst_output {
-	position: absolute;
-	top: 95px;
-	width: 100%;
-}
-
-#ilAll > div.alert {
-	position: absolute;
-	top: 32px;
-	border: 1px solid transparent;
-	border-radius: 0px;
-	left: 2px;
-	padding-top: 2px;
-	padding-left: 4px;
-	padding-bottom: 1px;
-	width: 100%;
-}
-
-#tst_left {
-    position: relative;
-    left: 0px;
-    top: 0px;
-    float: left;
-    width: 19%;
-    background-color: white;
-    box-shadow: 1px 1px 3px 0 #c6c6c6;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-#tst_left > div > .panel-body {
-    background-color: white;
-    font-size: 120%;
-}
-
-#tst_right {
-	box-shadow: -1px 1px 3px 0 #c6c6c6;
-	border-bottom: 1px solid #f0f0f0;
-}
-
-div.ilTstQuestionSummaryBlock_WorkingTime, div.ilTstWorkingFormBlock_WorkingTime {
-	width: 100%;
-	position: initial;
-	margin-left: 0px;
-	padding-left: 30px;
-	left: 0px;
-	background-color: #F0F0F0;
-	text-align: center;
-	font-size: 1.1rem;
-}
-
-div.ilTstWorkingFormInfo_ProcessTimeLeft {
-	font-size: 100%;
-	font-weight: normal;
-	text-align: left;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	display: block;
-}
-
-body.kioskWithCharSelector #ilCharSelectorPanel, body.kiosk #ilCharSelectorPanel {
-	top: 85px;
-}
-
-div.questionPrintview {
-	background-color: white;
-}
-
-input.ilTstMarkQuestionButton {
-	margin-left: 10px;
 }
 
 /* Forbidden Message */
@@ -159,47 +70,4 @@ div.sebForbiddenMessage {
 div.sebForbiddenLogin {
 	font-size: 100%;
 	margin-top: 20pt;
-}
-
-/* Some basic tweaks */
-body {
-	background-color: #F0F0F0;
-}
-
-body.std {
-	background-color: #F0F0F0;
-}
-
-#ilAll .ilFixedTopSpacer {
-    padding-top: 117px;
-}
-
-form[name="formInfoScreen"] * {
-	background-color: #F0F0F0;
-}
-
-.ilInfoScreenSec.form-horizontal .form-group {
-	background-color: #F0F0F0;;
-}
-
-.ilToolbar.navbar {
-	background-color: #F0F0F0;
-	margin-bottom: 0px;
-}
-
-#ilAll > .ilMainHeader.ilTopFixed {
-	top: 0px;
-}
-
-div.ilStartupSection p,  div.ilStartupSection p a {
-	font-size: 110% !important;
-}
-
-div.ilStartupSection > form {
-	box-shadow: 0 3px 3px 0 #c6c6c6;
-	padding: 5px;
-}
-
-div.ilStartupSection > form .ilFormHeader {
-	background-color: white;
 }
