@@ -25,6 +25,7 @@
 
 include 'class.ilSEBGlobalScreenModificationProvider.php';
 include 'class.ilSEBConfig.php';
+include 'class.ilSEBAccessChecker.php';
 
 class ilSEBPlugin extends ilUserInterfaceHookPlugin
 {
