@@ -23,9 +23,9 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
-include 'class.ilSEBGlobalScreenModificationProvider.php';
-include 'class.ilSEBConfig.php';
-include 'class.ilSEBAccessChecker.php';
+include_once 'class.ilSEBGlobalScreenModificationProvider.php';
+include_once 'class.ilSEBConfig.php';
+include_once 'class.ilSEBAccessChecker.php';
 
 class ilSEBPlugin extends ilUserInterfaceHookPlugin
 {

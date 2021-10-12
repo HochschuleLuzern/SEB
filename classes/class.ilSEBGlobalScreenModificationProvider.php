@@ -23,7 +23,7 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
-include 'class.ilSEBHeaderTitleObject.php';
+include_once 'class.ilSEBHeaderTitleObject.php';
 
 use ILIAS\GlobalScreen\Scope\Layout\Factory\MainBarModification;
 use ILIAS\GlobalScreen\Scope\Layout\Provider\AbstractModificationPluginProvider;
