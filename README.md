@@ -1,3 +1,7 @@
+##########################################################################################################################################################################
+# ILIAS 5.4 is EOL and so is this version of the plugin. There will be no more Updates or Bugfixes for it. Please move to ILIAS 7 and the current version of the plugin. #
+##########################################################################################################################################################################
+
 # SEB
 
 The ILIAS SEB plugin is a UIHook-Plugin for ILIAS that improves how ILIAS integrates with the [Safe Exam Browser](http://safeexambrowser.org). It has the following features:
