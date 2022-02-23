@@ -79,6 +79,14 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
         parent::__construct();
         
         /*
+         * We don't want this to be executed on the commandline, as it makes the setup fail
+         */
+        if (php_sapi_name() === 'cli') {
+            return;
+        }
+        
+        
+        /*
          * This is ugly, but we need this to avoid an endless loop when redirecting to the "Forbidden"-Page
          * See the Comment below for the one and only place this MUST be set.
          */
@@ -113,6 +121,7 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
             $DIC->http(),
             $this->seb_config
         );
+        
         if (!$this->access_checker->isCurrentUserAllowed()) {
             /*
              * This is ugly, but we need this to avoid an endless loop when redirecting to the "Forbidden"-Page
