@@ -29,16 +29,13 @@ include_once 'class.ilSEBAccessChecker.php';
 
 class ilSEBPlugin extends ilUserInterfaceHookPlugin
 {
-    const NOT_A_SEB_REQUEST = 0;
-    const SEB_REQUEST_OBJECT_KEYS_UNSPECIFIC = 1;
-    const SEB_REQUEST = 2;
-    const SEB_REQUEST_OBJECT_KEYS = 3;
-    const ROLES_NONE = 0;
-    const ROLES_ALL = 1;
-    const BROWSER_KIOSK_ALL = 0;
-    const BROWSER_KIOSK_SEB = 1;
-    const CACHE = 'SEB_CONFIG_CACHE';
-    const REQ_HEADER = 'X-Safeexambrowser-Requesthash';
+    const SEB_REQUEST_TYPES = [
+        'not_a_seb_request' => 0,
+        'seb_request_object_keys_unspecific' => 1,
+        'seb_request' => 2,
+        'seb_request_object_keys' => 3
+    ];
+    
     const REQUESTS_THAT_DONT_NEED_OBJECT_SPECIFIC_KEYS = [
         'context_check' => [
             ilContext::CONTEXT_WAC
@@ -65,6 +62,17 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
         ]
     ];
     
+    const REQ_HEADER = 'X-Safeexambrowser-Requesthash';
+    const STANDARD_BASE_CLASS = 'ilUIPluginRouterGUI';
+    const SEB_CHECK_KEY_GUI_DEFINITION = array(self::STANDARD_BASE_CLASS, ilSEBCheckKeyGUI::class);
+    const CHECK_KEY_COMMAND = 'CheckKey';
+    
+    const SEB_DATA_MODE = [
+        'header' => 0,
+        'cookie' => 1,
+        'none' => 2
+    ];
+    
     private static $forbidden = false;
     private static $kioskmode_checked = false;
     
@@ -77,6 +85,7 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
     public function __construct()
     {
         parent::__construct();
+        global $DIC;
         
         /*
          * We don't want this to be executed on the commandline, as it makes the setup fail
@@ -84,7 +93,6 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
         if (php_sapi_name() === 'cli') {
             return;
         }
-        
         
         /*
          * This is ugly, but we need this to avoid an endless loop when redirecting to the "Forbidden"-Page
@@ -94,8 +102,7 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
             return;
         }
         
-        global $DIC;
-        $this->current_ref_id = (int) $DIC->http()->request()->getQueryParams()['ref_id'];
+        $this->current_ref_id = $this->extractRefIdFromQuery($DIC->http()->request()->getQueryParams());
         $this->seb_config = new ilSEBConfig($DIC->database());
         
         /*
@@ -122,7 +129,12 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
             $this->seb_config
         );
         
-        if (!$this->access_checker->isCurrentUserAllowed()) {
+        $DIC->globalScreen()->layout()->meta()->addJs($this->getDirectory() . '/templates/default/seb.js', true);
+        $DIC->ctrl()->setParameterByClass(ilUIPluginRouterGUI::class, 'ref_id', $this->current_ref_id);
+        $DIC->globalScreen()->layout()->meta()->addOnloadCode("il.seb.saveAndCheckSEBKey('" .
+            $DIC->ctrl()->getLinkTargetByClass(self::SEB_CHECK_KEY_GUI_DEFINITION, self::CHECK_KEY_COMMAND) . "');");
+        
+        if ($this->access_checker->isKeyCheckPossible() && !$this->access_checker->isCurrentUserAllowed()) {
             /*
              * This is ugly, but we need this to avoid an endless loop when redirecting to the "Forbidden"-Page
              * This is the one and only place this MUST be set.
@@ -145,7 +157,7 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
         return "SEB";
     }
     
-    public function getCurrentRefId() : int
+    public function getCurrentRefId() : ?int
     {
         return $this->current_ref_id;
     }
@@ -153,5 +165,35 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
     public function isShowParticipantPicture() : bool
     {
         return $this->seb_config->getShowPaxPic();
+    }
+    
+    public function handleEvent(string $a_component, string $a_event, array $a_parameter) : void
+    {
+        if ($a_event === 'afterLogin') {
+            ilSession::clear('last_uri');
+        }
+    }
+    
+    private function extractRefIdFromQuery(array $query) : ?int
+    {
+        if (array_key_exists('ref_id', $query) && is_numeric($query['ref_id']) && $query['ref_id'] > 0) {
+            return (int) $query['ref_id'];
+        }
+        
+        if (array_key_exists('target', $query)) {
+            return $this->extractRefIdFromTargetParameter($query['target']);
+        }
+        
+        return null;
+    }
+    
+    private function extractRefIdFromTargetParameter(String $target) : ?int
+    {
+        $target_array = explode('_', $target);
+        if (is_numeric($target_array[1])  && $target_array[1] > 0) {
+            return (int) $target_array[1];
+        }
+        
+        return null;
     }
 }

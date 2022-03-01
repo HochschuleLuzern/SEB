@@ -25,8 +25,6 @@
 
 class ilSEBUIHookGUI extends ilUIHookPluginGUI
 {
-    const STANDARD_BASE_CLASS = 'ilUIPluginRouterGUI';
-        
     public function modifyGUI($a_comp, $a_part, $a_par = array())
     {
         if ($a_part == 'tabs') {
@@ -49,7 +47,7 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI
                     if ($security->isPreventionOfSimultaneousLoginsEnabled()) {
                         $DIC->ctrl()->setParameterByClass('ilSEBSessionsTabGUI', 'ref_id', $ref_id);
                         $link = $DIC->ctrl()->getLinkTargetByClass(array(
-                                self::STANDARD_BASE_CLASS,
+                                ilSEBPlugin::STANDARD_BASE_CLASS,
                                 'ilSEBSessionsTabGUI'
                         ), 'showSessions');
                         $a_par['tabs']->addTab('sessions', $this->getPluginObject()->txt('sessions_tab_title'), $link);
@@ -64,7 +62,7 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI
                         !($_GET['cmdClass'] == 'iltestcorrectionsgui' && $_GET['cmd'] != 'showQuestionList')) {
                     $DIC->ctrl()->setParameterByClass('ilSEBSettingsTabGUI', 'ref_id', $ref_id);
                     $link = $DIC->ctrl()->getLinkTargetByClass(array(
-                        self::STANDARD_BASE_CLASS,
+                        ilSEBPlugin::STANDARD_BASE_CLASS,
                         'ilSEBSettingsTabGUI'
                     ), 'seb_settings');
                     $a_par['tabs']->addTab("seb_settings", $this->getPluginObject()->txt('settings_tab_title'), $link);

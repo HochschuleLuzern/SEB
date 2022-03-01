@@ -25,7 +25,6 @@
 
 use ILIAS\Filesystem\Stream\Streams;
 use ILIAS\DI\HTTPServices;
-use ILIAS\GlobalScreen\Client\Notifications;
 
 class ilSEBAccessChecker
 {
@@ -35,7 +34,9 @@ class ilSEBAccessChecker
     private $rbacreview;
     private $http;
     private $conf;
+    private $data;
     private $ref_id;
+    private $mode;
     
     private $current_user_allowed;
     public function isCurrentUserAllowed() : bool
@@ -55,7 +56,7 @@ class ilSEBAccessChecker
      * @param integer $ref_id of the repository object that the user wants to access
      */
     public function __construct(
-        int $ref_id,
+        ?int $ref_id,
         ilCtrl $ctrl,
         ilObjUser $user,
         ilAuthSession $auth,
@@ -71,15 +72,28 @@ class ilSEBAccessChecker
         $this->http = $http;
         $this->conf = $conf;
         
-        $this->ref_id = $this->retrieveRefId();
+        $this->mode = $this->sebKeyInHeaderPostCookieOrNone();
+        $this->data = $this->retrieveSEBData($this->mode);
+        $this->ref_id = $ref_id;
         
         $is_logged_in = ($this->user->id && $this->user->id != ANONYMOUS_USER_ID);
         $is_root = $this->rbacreview->isAssigned($this->user->id, SYSTEM_ROLE_ID);
-        $this->setCurrentUserAllowed($is_logged_in, $is_root);
-        $this->setSwitchToSEBSkinNeeded($is_logged_in, $is_root);
+        $this->switch_to_seb_skin_needed = $this->detectSwitchToSEBSkinNeeded($is_logged_in, $is_root);
+        $this->current_user_allowed = $this->detectCurrentUserAllowed($is_logged_in, $is_root);
+        
+        ilSession::set('last_uri', $this->data['uri']);
     }
     
-    public function exitIlias(ilSEBPlugin $pl)
+    public function isKeyCheckPossible() : bool
+    {
+        if ($this->mode === ilSEBPlugin::SEB_DATA_MODE['none'] && $this->data['uri'] === '' && $this->data['last_uri'] !== '') {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public function exitIlias(ilSEBPlugin $pl) : void
     {
         $response = $this->http->response();
         $request = $this->http->request();
@@ -113,9 +127,19 @@ class ilSEBAccessChecker
         exit;
     }
     
-    private function setCurrentUserAllowed(bool $is_logged_in, bool $is_root)
+    private function sebKeyInHeaderPostCookieOrNone() : int
     {
-        $this->current_user_allowed = false;
+        if ($this->http->request()->hasHeader(ilSEBPlugin::REQ_HEADER)) {
+            return ilSEBPlugin::SEB_DATA_MODE['header'];
+        }
+        if (isset($_COOKIE['examKey']) && isset($_COOKIE['uri'])) {
+            return ilSEBPlugin::SEB_DATA_MODE['cookie'];
+        }
+        return ilSEBPlugin::SEB_DATA_MODE['none'];
+    }
+    
+    private function detectCurrentUserAllowed(bool $is_logged_in, bool $is_root) : bool
+    {
         $role_deny = $this->conf->getRoleDeny();
         $allow_without_seb = true;
         
@@ -125,9 +149,11 @@ class ilSEBAccessChecker
         
         if ($allow_without_seb ||
             ($this->detectSeb($this->ref_id) > 1) ||
-            ($this->anySEBKeyIsEnough() && $this->detectSeb(0))) {
-            $this->current_user_allowed = true;
+            ($this->anySEBKeyIsEnough() && $this->detectSeb())) {
+            return true;
         }
+        
+        return false;
     }
     
     private function anySEBKeyIsEnough() : bool
@@ -153,68 +179,63 @@ class ilSEBAccessChecker
         return false;
     }
     
-    private function setSwitchToSEBSkinNeeded(bool $is_logged_in, bool $is_root)
+    private function detectSwitchToSEBSkinNeeded(bool $is_logged_in, bool $is_root) : bool
     {
         $is_kiosk_user = (($this->conf->getRoleKiosk() == 1 || $this->rbacreview->isAssigned($this->user->id, $this->conf->getRoleKiosk())) && !$is_root);
         
         if ($is_logged_in && $is_kiosk_user) {
-            $this->switch_to_seb_skin_needed = true;
-        } else {
-            $this->switch_to_seb_skin_needed = false;
+            return true;
         }
+        
+        return false;
     }
     
     private function detectSeb(?int $ref_id) : int
     {
-        $server_req_header = $this->http->request()->getHeader(ilSEBPlugin::REQ_HEADER)[0];
+        $exam_key = $this->data['exam_key'];
         
-        if (!$server_req_header || $server_req_header == "") {
-            return ilSebPlugin::NOT_A_SEB_REQUEST;
-        }
-        if ($this->conf->checkSebKey($server_req_header, $this->buildFullUrl())) {
-            return ilSEBPlugin::SEB_REQUEST;
-        }
-        if ($this->conf->checkObjectKey($server_req_header, $this->buildFullUrl(), $ref_id)) {
-            return ilSEBPlugin::SEB_REQUEST_OBJECT_KEYS;
-        }
-        if (!$ref_id && $this->conf->checkKeyAgainstAllObjectKeys($server_req_header, $this->buildFullUrl())) {
-            return ilSEBPlugin::SEB_REQUEST_OBJECT_KEYS_UNSPECIFIC;
+        if ($exam_key === "") {
+            return ilSebPlugin::SEB_REQUEST_TYPES['not_a_seb_request'];
         }
         
-        return ilSebPlugin::NOT_A_SEB_REQUEST;
+        if ($this->conf->checkSebKey($exam_key, $this->data['uri'])) {
+            return ilSebPlugin::SEB_REQUEST_TYPES['seb_request'];
+        }
+        if ($this->conf->checkObjectKey($exam_key, $this->data['uri'], $ref_id)) {
+            return ilSebPlugin::SEB_REQUEST_TYPES['seb_request_object_keys'];
+        }
+        
+        if (!$ref_id && $this->conf->checkKeyAgainstAllObjectKeys($exam_key, $this->data['uri'])) {
+            return ilSebPlugin::SEB_REQUEST_TYPES['seb_request_object_keys'];
+        }
+        
+        return ilSebPlugin::SEB_REQUEST_TYPES['seb_request_object_keys_unspecific'];
     }
     
-    private function retrieveRefId() : ?int
+    private function retrieveSEBData(int $mode) : array
     {
-        $ref_id = $this->http->request()->getQueryParams()['ref_id'];
+        $data = [];
         
-        if (is_null($ref_id) || !is_numeric($ref_id)) {
-            $ref_id = $this->retrieveRefIdFromTarget();
+        switch ($mode) {
+            case ilSEBPlugin::SEB_DATA_MODE['header']:
+                $data['exam_key'] = $this->http->request()->getHeader(ilSEBPlugin::REQ_HEADER)[0];
+                $data['uri'] = $this->retrieveFullUri();
+                break;
+            case ilSEBPlugin::SEB_DATA_MODE['cookie']:
+                $data['exam_key'] = $_COOKIE['examKey'];
+                $data['uri'] = $_COOKIE['uri'];
+                break;
+            default:
+                $data['exam_key'] = '';
+                $data['uri'] = isset($_COOKIE['uri']) ? $_COOKIE['uri'] : '';
+                break;
         }
         
-        if (is_null($ref_id) || $ref_id < 1) {
-            return null;
-        }
-        
-        return (int) $ref_id;
+        $data['last_uri'] = ilSession::get('last_uri');
+        return $data;
     }
     
-    private function retrieveRefIdFromTarget() : ?int
-    {
-        $target_string = $this->http->request()->getQueryParams()['target'];
-        if (is_null($target_string)) {
-            return null;
-        }
-        
-        $target_array = explode('_', $target_string);
-        if (!is_numeric($target_array[1])) {
-            return null;
-        }
-        
-        return (int) $target_array[1];
-    }
-    
-    private function buildFullUrl() : string
+    private function retrieveFullUri() : string
     {
         $uri = $this->http->request()->getUri();
         $protocol = $uri->getScheme();

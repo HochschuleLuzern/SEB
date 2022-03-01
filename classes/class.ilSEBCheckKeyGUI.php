@@ -1,19 +1,19 @@
-<?php
+<?php declare(strict_types = 1);
 /**
  * Copyright (c) 2017 Hochschule Luzern
  *
  * This file is part of the SEB-Plugin for ILIAS.
-
+ 
  * SEB-Plugin for ILIAS is free software: you can redistribute
  * it and/or modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
-
+ 
  * SEB-Plugin for ILIAS is distributed in the hope that
  * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
  * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ 
  * You should have received a copy of the GNU General Public License
  * along with SEB-Plugin for ILIAS.  If not,
  * see <http://www.gnu.org/licenses/>.
@@ -23,17 +23,24 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
-// alphanumerical ID of the plugin; never change this
-$id = "seb";
-
-// code version; must be changed for all code changes
-$version = "2.5.0";
-
-// ilias min and max version; must always reflect the versions that should
-// run with the plugin
-$ilias_min_version = "7.0";
-$ilias_max_version = "7.99";
-
-// optional, but useful: Add one or more responsible persons and a contact email
-$responsible = "Stephan Winiker";
-$responsible_mail = "stephan.winiker@hslu.ch";
+/**
+ * Class ilSEBCheckKeyGUI
+ * @author Stephan Winiker <stephan.winiker@hslu.ch>
+ * @ilCtrl_isCalledBy    ilSEBCheckKeyGUI: ilUIPluginRouterGUI
+ */
+class ilSEBCheckKeyGUI
+{
+    public function executeCommand() {
+        global $DIC;
+        $cmd = $DIC->ctrl()->getCmd();
+        switch ($cmd) {
+            case ilSEBPlugin::CHECK_KEY_COMMAND:
+                $this->$cmd();
+                break;
+        }
+    }
+    
+    private function checkKey() {
+        echo true;
+    }
+}

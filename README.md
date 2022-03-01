@@ -8,10 +8,10 @@ The ILIAS SEB plugin is a UIHook-Plugin for ILIAS that improves how ILIAS integr
 * It adds a menu to change the language without having to access the user settings to the interface.
 * It adds a tab for administrators to the test object (could be expanded to other objects in the future) to add object specific keys.
 * If "Prevent Simultaneous Logins" is activated a tab for session management in the test object can be activated, allowing to delete sessions for specific test users, to allow users back in if they are locked out due to a browser or computer issue (exiting SEB without closing the session).
+* From Version 2.5 on it works with the old header-method as well as with SEB-Keys sent through the new Javascript based method.
 * **This plugin resets the "Exam View"-Setting to false when a test is started. This is needed to avoid colitions with some modifications done by the Exam View.**
 
 This plugin is a completely refactored fork of the SEB plugin developed by Stefan Schneider at the University of Marburg.
-
 
 **Minimum ILIAS Version:**
 7.0

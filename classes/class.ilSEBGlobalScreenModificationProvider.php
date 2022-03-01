@@ -121,7 +121,7 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
     private function initializeHeaderTitleObject() : ilSEBHeaderTitleObject
     {
         $title_object = new ilSEBHeaderTitleObject($this->plugin, $this->dic->user());
-        if ($this->plugin->getCurrentRefId() != 0) {
+        if ($this->plugin->getCurrentRefId() !== Null && $this->plugin->getCurrentRefId() !== 0) {
             $object = ilObjectFactory::getInstanceByRefId($this->plugin->getCurrentRefId());
             $title_object = $title_object->withObject($object);
         }
