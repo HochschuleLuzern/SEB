@@ -81,7 +81,7 @@ class ilSEBAccessChecker
         $this->switch_to_seb_skin_needed = $this->detectSwitchToSEBSkinNeeded($is_logged_in, $is_root);
         $this->current_user_allowed = $this->detectCurrentUserAllowed($is_logged_in, $is_root);
         
-        ilSession::set('last_uri', $this->data['uri']);
+        ilSession::set('last_uri', $this->retrieveFullUri());
     }
     
     public function isKeyCheckPossible() : bool
