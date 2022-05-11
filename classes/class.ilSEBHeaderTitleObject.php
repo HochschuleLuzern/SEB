@@ -52,7 +52,8 @@ class ilSEBHeaderTitleObject
         
         if ($this->user->getId() > 0) {
             $template->setVariable('PARTICIPANT_NAME', $this->user->getFullname());
-            $matriculation = $this->user->getMatriculation() ? '(' . $this->user->getMatriculation() . ')' : '';
+            $template->setVariable('PARTICIPANT_LOGIN', $this->user->getLogin());
+            $matriculation = $this->user->getMatriculation() ? ', ' . $this->user->getMatriculation() : '';
             $template->setVariable('MATRICULATION', $matriculation);
         }
         
