@@ -90,6 +90,25 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
         )->withHighPriority();
     }
     
+    public function getResponsiveLogoModification($screen_context_stack) : ?LogoModification
+    {
+        return $this->dic->globalScreen()->layout()->factory()->logo()->withModification(
+            function (Image $current = null) : ?Image {
+                $logo_path = './Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/SEB/templates/images/HeaderIcon.png';
+                $logo_alt = 'SEB Logo';
+                if ($this->plugin->isShowParticipantPicture()) {
+                    $logo_path = $this->dic->user()->getPersonalPicturePath('small', true);
+                    $logo_alt = $this->dic->user()->getFullname();
+                }
+                $image = $this->dic->ui()->factory()->image()->standard($logo_path, $logo_alt);
+                
+                
+                $image = $this->withLogoAction($image);
+                return $image;
+            }
+            )->withHighPriority();
+    }
+    
     public function getTitleModification(CalledContexts $screen_context_stack) : ?TitleModification
     {
         return $this->dic->globalScreen()->layout()->factory()->title()->withModification(

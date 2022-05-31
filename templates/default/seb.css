@@ -26,6 +26,11 @@ p.ilStartupSection, .ilContentFixed button, .breadcrumbs, .nav.il-maincontrols,
 	filter: initial;	
 }
 
+.il-maincontrols-metabar > li > .btn-bulky .glyphicon,
+.il-maincontrols-metabar > li > .link-bulky .glyphicon {
+	color: #fff;
+}
+
 .header-inner .il-logo, .header-inner .il-pagetitle {
 	width: 100%;	
 }
@@ -34,6 +39,7 @@ p.ilStartupSection, .ilContentFixed button, .breadcrumbs, .nav.il-maincontrols,
 	display: flex;
 	justify-content: space-between;
 	white-space: nowrap;
+	color: #fff;
 }
 
 .il-metabar-slates {

@@ -3,6 +3,8 @@
 }
 .il-logo img {
 	height: 130px;
+	position: relative;
+	top: 35px;
 }
 
 div.il_HeaderInner.media {
@@ -16,8 +18,15 @@ div.il_HeaderInner.media {
 @media only screen and (max-width: 768px) {
 	.il-logo img {
 		height: initial;
-		max-height: 130px;
 		min-height: 45px;
 		min-width: 45px;
+	}
+	.visible-xs {
+		height: 120px;
+		width: 120px;
+	}
+	
+	.il-pagetitle {
+		padding-left: 0;
 	}
 }
