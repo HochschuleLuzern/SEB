@@ -105,20 +105,6 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
         $this->current_ref_id = $this->extractRefIdFromQuery($DIC->http()->request()->getQueryParams());
         $this->seb_config = new ilSEBConfig($DIC->database());
         
-        /*
-         * We need to switch the kioskmode off in tests to avoid collitions in certain modification providers
-         * for the GlobalScreen. We need to check this here, because there simply is no other place.
-         */
-        if (!self::$kioskmode_checked && ilObject::_lookupType($this->current_ref_id, true) == 'tst') {
-            $test = new ilObjTest($this->getCurrentRefId());
-            if ($test->getKioskMode() === true) {
-                $test->setKioskMode();
-                $test->saveToDb();
-            }
-            
-            self::$kioskmode_checked = true;
-        }
-        
         $this->access_checker = new ilSEBAccessChecker(
             $this->getCurrentRefId(),
             $DIC->ctrl(),
@@ -142,6 +128,23 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
             self::$forbidden = true;
             
             $this->access_checker->exitIlias($this);
+        }
+        
+        /*
+         * We need to switch the kioskmode off in tests to avoid collitions in certain modification providers
+         * for the GlobalScreen. We need to check this here, because there simply is no other place.
+         */
+        if (!self::$kioskmode_checked && 
+            $this->access_checker->isSwitchToSebSkinNeeded() && 
+            ilObject::_lookupType($this->current_ref_id, true) == 'tst'
+        ) {
+            $test = new ilObjTest($this->getCurrentRefId());
+            if ($test->getKioskMode() === true) {
+                $test->setKioskMode();
+                $test->saveToDb();
+            }
+            
+            self::$kioskmode_checked = true;
         }
         
         if ($this->access_checker->isSwitchToSebSkinNeeded() &&
