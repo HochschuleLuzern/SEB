@@ -147,3 +147,20 @@ if ($ilDB->query("SELECT * FROM ui_uihk_seb_conf WHERE name='show_pax_pic'")->nu
 $ilDB->manipulate('ALTER TABLE ui_uihk_seb_keys Modify seb_key_win VARCHAR(2000);');
 $ilDB->manipulate('ALTER TABLE ui_uihk_seb_keys Modify seb_key_macos VARCHAR(2000);');
 ?>
+<#7>
+<?php
+if ($ilDB->query("SELECT * FROM ui_uihk_seb_conf WHERE name='show_pax_matriculation'")->numRows() == 0) {
+    $data = array(
+        'name' => array('text', 'show_pax_matriculation'),
+        'value' => array('text', '0')
+    );
+    $ilDB->insert('ui_uihk_seb_conf', $data);
+}
+if ($ilDB->query("SELECT * FROM ui_uihk_seb_conf WHERE name='show_pax_username'")->numRows() == 0) {
+    $data = array(
+        'name' => array('text', 'show_pax_username'),
+        'value' => array('text', '0')
+    );
+    $ilDB->insert('ui_uihk_seb_conf', $data);
+}
+?>

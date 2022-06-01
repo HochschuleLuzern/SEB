@@ -71,6 +71,16 @@ class ilSEBConfig
         return (bool) $this->conf['show_pax_pic'];
     }
     
+    public function getShowPaxMatriculation() : bool
+    {
+        return (bool) $this->conf['show_pax_matriculation'];
+    }
+    
+    public function getShowPaxUsername() : bool
+    {
+        return (bool) $this->conf['show_pax_username'];
+    }
+    
     /**
      * @return string[]
      */
@@ -136,7 +146,9 @@ class ilSEBConfig
             'role_deny',
             'role_kiosk',
             'activate_session_control',
-            'show_pax_pic'
+            'show_pax_pic',
+            'show_pax_matriculation',
+            'show_pax_username'
         );
         
         $r = 0;

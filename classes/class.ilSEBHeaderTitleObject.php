@@ -52,8 +52,27 @@ class ilSEBHeaderTitleObject
         
         if ($this->user->getId() > 0) {
             $template->setVariable('PARTICIPANT_NAME', $this->user->getFullname());
-            $matriculation = $this->user->getMatriculation() ? '(' . $this->user->getMatriculation() . ')' : '';
-            $template->setVariable('MATRICULATION', $matriculation);
+            
+            $matriculation = null;
+            $username = null;
+            
+            if ($this->plugin->isShowParticipantMatriculation() && $this->user->getMatriculation() !== '') {
+                $matriculation = $this->user->getMatriculation();
+            }
+            if ($this->plugin->isShowParticipantUsername()) {
+                $username = $this->user->getLogin();
+            }
+            
+            $additional_info = '';
+            
+            if (!is_null($username) && !is_null($matriculation)) {
+                $additional_info = '(' . $username . ' - ' . $matriculation . ')';
+            } elseif (!is_null($username) || !is_null($matriculation)) {
+                $to_be_shown = $username ?? $matriculation;
+                $additional_info = '(' . $to_be_shown . ')';
+            }
+            
+            $template->setVariable('ADDITIONAL_INFO', $additional_info);
         }
         
         if (is_null($this->object)) {

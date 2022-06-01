@@ -99,7 +99,6 @@ class ilSEBConfigGUI extends ilPluginConfigGUI
         $role_kiosk_sel->setValue($this->config->getRoleKiosk());
         $form->addItem($role_kiosk_sel);
         
-        // activate session control
         $activate_session_control_cb = new ilCheckboxInputGUI($this->pl->txt('activate_session_control'), 'activate_session_control');
         $security = ilSecuritySettings::_getInstance();
         if ($security->isPreventionOfSimultaneousLoginsEnabled()) {
@@ -111,11 +110,20 @@ class ilSEBConfigGUI extends ilPluginConfigGUI
         $activate_session_control_cb->setChecked($this->config->getActivateSessionControl());
         $form->addItem($activate_session_control_cb);
         
-        // show pax picture
         $show_pax_pic_cb = new ilCheckboxInputGUI($this->pl->txt('show_pax_pic'), 'show_pax_pic');
         $show_pax_pic_cb->setInfo($this->pl->txt('show_pax_pic_info'));
         $show_pax_pic_cb->setChecked($this->config->getShowPaxPic());
         $form->addItem($show_pax_pic_cb);
+        
+        $show_pax_matriculation_cb = new ilCheckboxInputGUI($this->pl->txt('show_pax_matriculation'), 'show_pax_matriculation');
+        $show_pax_matriculation_cb->setInfo($this->pl->txt('show_pax_matriculation_info'));
+        $show_pax_matriculation_cb->setChecked($this->config->getShowPaxMatriculation());
+        $form->addItem($show_pax_matriculation_cb);
+        
+        $show_pax_username_cb = new ilCheckboxInputGUI($this->pl->txt('show_pax_username'), 'show_pax_username');
+        $show_pax_username_cb->setInfo($this->pl->txt('show_pax_username_info'));
+        $show_pax_username_cb->setChecked($this->config->getShowPaxUsername());
+        $form->addItem($show_pax_username_cb);
         
         $form->addCommandButton('save', $this->lang->txt('save'));
                     
@@ -137,6 +145,8 @@ class ilSEBConfigGUI extends ilPluginConfigGUI
             $form_input['role_kiosk'] = $form->getInput('role_kiosk');
             $form_input['activate_session_control'] = $form->getInput('activate_session_control');
             $form_input['show_pax_pic'] = $form->getInput('show_pax_pic');
+            $form_input['show_pax_matriculation'] = $form->getInput('show_pax_matriculation');
+            $form_input['show_pax_username'] = $form->getInput('show_pax_username');
             
             $success = $this->config->saveSEBConf($form_input);
 

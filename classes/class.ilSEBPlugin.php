@@ -170,6 +170,16 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
         return $this->seb_config->getShowPaxPic();
     }
     
+    public function isShowParticipantMatriculation() : bool
+    {
+        return $this->seb_config->getShowPaxMatriculation();
+    }
+    
+    public function isShowParticipantUsername() : bool
+    {
+        return $this->seb_config->getShowPaxUsername();
+    }
+    
     public function handleEvent(string $a_component, string $a_event, array $a_parameter) : void
     {
         if ($a_event === 'afterLogin') {
