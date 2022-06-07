@@ -86,11 +86,18 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
     {
         parent::__construct();
         global $DIC;
+        $ctrl = $DIC->ctrl();
+        $user = $DIC->user();
+        $auth = $DIC['ilAuthSession'];
+        $rbac_review = $DIC->rbac()->review();
+        $http = $DIC->http();
+        $database = $DIC->database();
+        $layout_meta = $DIC->globalScreen()->layout()->meta();
         
         /*
          * We don't want this to be executed on the commandline, as it makes the setup fail
          */
-        if (php_sapi_name() === 'cli') {
+        if (php_sapi_name() === 'cli' || $ctrl->getCmd() === 'installPlugin') {
             return;
         }
         
@@ -102,23 +109,23 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
             return;
         }
         
-        $this->current_ref_id = $this->extractRefIdFromQuery($DIC->http()->request()->getQueryParams());
-        $this->seb_config = new ilSEBConfig($DIC->database());
+        $this->current_ref_id = $this->extractRefIdFromQuery($http->request()->getQueryParams());
+        $this->seb_config = new ilSEBConfig($database);
         
         $this->access_checker = new ilSEBAccessChecker(
             $this->getCurrentRefId(),
-            $DIC->ctrl(),
-            $DIC->user(),
-            $DIC['ilAuthSession'],
-            $DIC->rbac()->review(),
-            $DIC->http(),
+            $ctrl,
+            $user,
+            $auth,
+            $rbac_review,
+            $http,
             $this->seb_config
         );
         
-        $DIC->globalScreen()->layout()->meta()->addJs($this->getDirectory() . '/templates/default/seb.js', true);
-        $DIC->ctrl()->setParameterByClass(ilUIPluginRouterGUI::class, 'ref_id', $this->current_ref_id);
-        $DIC->globalScreen()->layout()->meta()->addOnloadCode("il.seb.saveAndCheckSEBKey('" .
-            $DIC->ctrl()->getLinkTargetByClass(self::SEB_CHECK_KEY_GUI_DEFINITION, self::CHECK_KEY_COMMAND) . "');");
+        $layout_meta->addJs($this->getDirectory() . '/templates/default/seb.js', true);
+        $ctrl->setParameterByClass(ilUIPluginRouterGUI::class, 'ref_id', $this->current_ref_id);
+        $layout_meta->addOnloadCode("il.seb.saveAndCheckSEBKey('" .
+            $ctrl->getLinkTargetByClass(self::SEB_CHECK_KEY_GUI_DEFINITION, self::CHECK_KEY_COMMAND) . "');");
         
         if ($this->access_checker->isKeyCheckPossible() && !$this->access_checker->isCurrentUserAllowed()) {
             /*
