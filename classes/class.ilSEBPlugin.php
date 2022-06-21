@@ -87,12 +87,6 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
         parent::__construct();
         global $DIC;
         $ctrl = $DIC->ctrl();
-        $user = $DIC->user();
-        $auth = $DIC['ilAuthSession'];
-        $rbac_review = $DIC->rbac()->review();
-        $http = $DIC->http();
-        $database = $DIC->database();
-        $layout_meta = $DIC->globalScreen()->layout()->meta();
         
         /*
          * We don't want this to be executed on the commandline, as it makes the setup fail
@@ -100,6 +94,13 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
         if (php_sapi_name() === 'cli' || $ctrl->getCmd() === 'installPlugin') {
             return;
         }
+        
+        $user = $DIC->user();
+        $auth = $DIC['ilAuthSession'];
+        $rbac_review = $DIC->rbac()->review();
+        $http = $DIC->http();
+        $database = $DIC->database();
+        $layout_meta = $DIC->globalScreen()->layout()->meta();
         
         /*
          * This is ugly, but we need this to avoid an endless loop when redirecting to the "Forbidden"-Page
