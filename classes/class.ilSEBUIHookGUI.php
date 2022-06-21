@@ -42,6 +42,7 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI
             if ($obj_type == 'tst' && $has_write_access && $cmd !== 'showquestion' && $cmd !== 'outuserresultsoverview') {
                 if (in_array($cmd_class, $conf->getCmdClassesWithoutSebKeyTab()) 
                     || $cmd_class === 'iltestcorrectionsgui' && $cmd !== 'showquestionlist'
+                    || $cmd_class === 'ilparticipantstestresultsgui' && $cmd !== 'showparticipants'
                     || $cmd === 'editquestion') {
                     return;
                 }
