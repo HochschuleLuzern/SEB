@@ -27,6 +27,7 @@ class ilSEBConfig
 {
     private $conf;
     private $db;
+    private const CMD_CLASSES_WITHOUT_SEB_KEY_TAB = ['ilsebsessionstabgui', 'ilsebsettingstabgui', 'iltestevaluationgui', 'ilobjectactivationgui', 'ilassquestionpreviewgui'];
     
     public function __construct(ilDBInterface $db)
     {
@@ -34,6 +35,10 @@ class ilSEBConfig
         if ($this->db->tableExists('ui_uihk_seb_conf')) {
             $this->readSEBConf();
         }
+    }
+    
+    public function getCmdClassesWithoutSebKeyTab() : array {
+        return self::CMD_CLASSES_WITHOUT_SEB_KEY_TAB;
     }
     
     public function checkSebKey(string $key_from_browser, string $request_url) : bool

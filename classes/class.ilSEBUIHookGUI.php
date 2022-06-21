@@ -35,14 +35,20 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI
             $obj_id = ilObject::_lookupObjectId($ref_id);
             $obj_type = ilObject::_lookupType($obj_id);
             $has_write_access = $DIC->rbac()->system()->checkAccessOfUser($DIC->user()->getId(), 'write', $ref_id);
+            
+            $cmd_class = strtolower($_GET['cmdClass'] ?? '');
+            $cmd = strtolower($_GET['cmd'] ?? '');
     
-            if ($obj_type == 'tst' && $has_write_access && $_GET['cmd'] != 'showQuestion' && $_GET['cmd'] != 'outUserResultsOverview') {
+            if ($obj_type == 'tst' && $has_write_access && $cmd !== 'showquestion' && $cmd !== 'outuserresultsoverview') {
+                if (in_array($cmd_class, $conf->getCmdClassesWithoutSebKeyTab()) 
+                    || $cmd_class === 'iltestcorrectionsgui' && $cmd !== 'showquestionlist'
+                    || $cmd === 'editquestion') {
+                    return;
+                }
                 /*
     	         * Add Sessioncontrol Tab for SEB
     	         **/
-                if ($conf->getActivateSessionControl() &&
-                    !in_array($_GET['cmdClass'], ['ilsebsettingstabgui', 'iltestevaluationgui', 'ilobjectactivationgui']) &&
-                    !($_GET['cmdClass'] == 'iltestcorrectionsgui' && $_GET['cmd'] != 'showQuestionList')) {
+                if ($conf->getActivateSessionControl()) {
                     $security = ilSecuritySettings::_getInstance();
                     if ($security->isPreventionOfSimultaneousLoginsEnabled()) {
                         $DIC->ctrl()->setParameterByClass('ilSEBSessionsTabGUI', 'ref_id', $ref_id);
@@ -57,9 +63,7 @@ class ilSEBUIHookGUI extends ilUIHookPluginGUI
                 /*
     	         * Add Settings Tab for SEB
     	         **/
-                if ($conf->getAllowObjectKeys() &&
-                        !in_array($_GET['cmdClass'], ['ilsebsessionstabgui', 'iltestevaluationgui', 'ilobjectactivationgui']) &&
-                        !($_GET['cmdClass'] == 'iltestcorrectionsgui' && $_GET['cmd'] != 'showQuestionList')) {
+                if ($conf->getAllowObjectKeys()) {
                     $DIC->ctrl()->setParameterByClass('ilSEBSettingsTabGUI', 'ref_id', $ref_id);
                     $link = $DIC->ctrl()->getLinkTargetByClass(array(
                         ilSEBPlugin::STANDARD_BASE_CLASS,
