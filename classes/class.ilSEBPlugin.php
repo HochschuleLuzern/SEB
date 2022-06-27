@@ -77,10 +77,10 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
     private static $forbidden = false;
     private static $kioskmode_checked = false;
     
-    private ilSEBConfig $seb_config;
-    private ilSEBAccessChecker $access_checker;    
+    private $seb_config;
+    private $access_checker;    
     
-    private ?int $current_ref_id;
+    private $current_ref_id;
     
     public function __construct()
     {
