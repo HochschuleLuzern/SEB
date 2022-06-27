@@ -30,6 +30,7 @@ include_once 'class.ilSEBAccessChecker.php';
 class ilSEBPlugin extends ilUserInterfaceHookPlugin
 {
     const SEB_REQUEST_TYPES = [
+        'seb_request_invalid' => -1,
         'not_a_seb_request' => 0,
         'seb_request_object_keys_unspecific' => 1,
         'seb_request' => 2,
@@ -76,11 +77,10 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
     private static $forbidden = false;
     private static $kioskmode_checked = false;
     
-    private $access_checker;
+    private ilSEBConfig $seb_config;
+    private ilSEBAccessChecker $access_checker;    
     
-    private $seb_config;
-    
-    private $current_ref_id;
+    private ?int $current_ref_id;
     
     public function __construct()
     {
@@ -128,7 +128,7 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
         $layout_meta->addOnloadCode("il.seb.saveAndCheckSEBKey('" .
             $ctrl->getLinkTargetByClass(self::SEB_CHECK_KEY_GUI_DEFINITION, self::CHECK_KEY_COMMAND) . "');");
         
-        if ($this->access_checker->isKeyCheckPossible() && !$this->access_checker->isCurrentUserAllowed()) {
+        if ($this->access_checker->isKeyCheckPossibleOrUnavoidable() && !$this->access_checker->isCurrentUserAllowed()) {
             /*
              * This is ugly, but we need this to avoid an endless loop when redirecting to the "Forbidden"-Page
              * This is the one and only place this MUST be set.

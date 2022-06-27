@@ -84,7 +84,7 @@ class ilSEBAccessChecker
         ilSession::set('last_uri', $this->retrieveFullUri());
     }
     
-    public function isKeyCheckPossible() : bool
+    public function isKeyCheckPossibleOrUnavoidable() : bool
     {
         if ($this->mode === ilSEBPlugin::SEB_DATA_MODE['none'] && $this->data['uri'] === '' && $this->data['last_uri'] !== '') {
             return false;
@@ -148,7 +148,7 @@ class ilSEBAccessChecker
         }
         
         if ($allow_without_seb ||
-            ($this->detectSeb($this->ref_id) > 1) ||
+            ($this->detectSeb($this->ref_id) >= ilSEBPlugin::SEB_REQUEST_TYPES['seb_request']) ||
             ($this->anySEBKeyIsEnough() && $this->detectSeb())) {
             return true;
         }
@@ -206,10 +206,10 @@ class ilSEBAccessChecker
         }
         
         if (!$ref_id && $this->conf->checkKeyAgainstAllObjectKeys($exam_key, $this->data['uri'])) {
-            return ilSebPlugin::SEB_REQUEST_TYPES['seb_request_object_keys'];
+            return ilSebPlugin::SEB_REQUEST_TYPES['seb_request_object_keys_unspecific'];
         }
         
-        return ilSebPlugin::SEB_REQUEST_TYPES['seb_request_object_keys_unspecific'];
+        return ilSebPlugin::SEB_REQUEST_TYPES['seb_request_invalid'];
     }
     
     private function retrieveSEBData(int $mode) : array

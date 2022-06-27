@@ -23,10 +23,6 @@
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
 
-use ILIAS\DI\Container;
-use ILIAS\Refinery\Factory;
-use ILIAS\DI\UIServices;
-
 class ilSEBHeaderTitleObject
 {
     private $plugin;

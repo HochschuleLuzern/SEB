@@ -84,7 +84,7 @@ class ilSEBSessionsTableGUI extends ilTable2GUI
      *
      * @param array
      */
-    public function fillRow($row_data)
+    public function fillRow($row_data) : void
     {
         if ($this->hide_checkbox) {
             $this->tpl->setCurrentBlock('id_hidden');

@@ -1,4 +1,4 @@
-<?php  declare(strict_types=1);
+<?php  declare(strict_types = 1);
 /**
  * Copyright (c) 2017 Hochschule Luzern
  *
@@ -22,6 +22,8 @@
  * Schneider that can be found on Github
  * <https://github.com/hrz-unimr/Ilias.SEBPlugin>
  */
+
+use ILIAS\DI\UIServices;
 
 class ilSEBConfigGUI extends ilPluginConfigGUI
 {

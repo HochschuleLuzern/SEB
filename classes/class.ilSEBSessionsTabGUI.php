@@ -36,7 +36,7 @@ include_once 'class.ilSEBSessionsTableGUI.php';
  */
 class ilSEBSessionsTabGUI extends ilSEBTabGUI
 {
-    public function executeCommand()
+    public function executeCommand() : void
     {
         if ($this->rbac_system->checkAccess('write', $this->ref_id) && (in_array(($cmd = $this->ctrl->getCmd()), ['showSessions', 'applyFilter', 'resetFilter', 'confirmDeleteSessions', 'deleteSessions']))) {
             switch ($cmd) {
@@ -138,7 +138,7 @@ class ilSEBSessionsTabGUI extends ilSEBTabGUI
     /**
      * @return mixed An array of all the sessions or false if none where found
      */
-    private function getSessionsArrayOfTestParticipants()
+    private function getSessionsArrayOfTestParticipants() : array
     {
         $test = new ilObjTest($this->ref_id);
         $pax_data = new ilTestParticipantData($this->db, $this->lang);

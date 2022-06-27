@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 /**
  * Copyright (c) 2017 Hochschule Luzern
  *
@@ -194,7 +194,10 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
         return $meta_bar->withAdditionalEntry('logout', $logout_entry);
     }
     
-    private function getEntriesForAvailableLanguages()
+    /**
+     * @return \ILIAS\UI\Component\Button\Bulky[]
+     **/
+    private function getEntriesForAvailableLanguages() : array
     {
         $f = $this->dic->ui()->factory();
         $languages = $this->dic->language()->getInstalledLanguages();
@@ -247,7 +250,7 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
         return preg_replace("/&*lang=[a-z]{2}&*/", "", $base);
     }
     
-    private function addCSS()
+    private function addCSS() : void
     {
         $this->dic->ui()->mainTemplate()->addCss($this->plugin->getStyleSheetLocation('default/seb.css'));
         
