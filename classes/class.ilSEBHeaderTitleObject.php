@@ -44,6 +44,8 @@ class ilSEBHeaderTitleObject
     
     public function getParsedTitleString() : string
     {
+        global $ilSetting;
+        
         $template = new ilTemplate('tpl.il_as_tst_kiosk_head.html', true, true, $this->plugin->getDirectory());
         
         if ($this->user->getId() > 0) {
@@ -75,8 +77,15 @@ class ilSEBHeaderTitleObject
             return $template->get();
         }
         
+        if ($this->object->getType() === 'tst') {
+            $template->setVariable("TITLE", $this->object->getTitle());
+        }
+        else {
+            $template->setVariable("TITLE", $ilSetting->get('short_inst_name'));
+        }
+
         if ($this->object->getType() === 'tst' && $this->object->isShowExamIdInTestPassEnabled()) {
-            $template->setVariable("EXAM_ID_TXT", $this->plugin->txt("exam_id") . ": ");
+            $template->setVariable("EXAM_ID_TXT", '(' . $this->plugin->txt("exam_id") . ": ");
             $testSession = new ilTestSession();
             $testSession->loadTestSession($this->object->getTestId(), $this->user->getId());
             $exam_id = ilObjTest::buildExamId(
@@ -84,7 +93,7 @@ class ilSEBHeaderTitleObject
                 $testSession->getPass(),
                 $this->plugin->getCurrentRefId()
             );
-            $template->setVariable('EXAM_ID', $exam_id);
+            $template->setVariable('EXAM_ID', $exam_id . ')');
         }
         
         return $template->get();
