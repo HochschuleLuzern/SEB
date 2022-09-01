@@ -76,13 +76,13 @@ abstract class ilSEBTabGUI
         $this->locator->addItem(
             $this->object->getTitle(),
             $this->ctrl->getLinkTargetByClass(
-                    array(
+                array(
                         'ilRepositoryGUI',
                         'ilObj' . $this->obj_def->getClassName($this->object->getType()) . 'GUI'
                 ),
-                    "",
-                    $this->ref_id
-                )
+                "",
+                $this->ref_id
+            )
         );
         $this->tpl->setLocator();
         

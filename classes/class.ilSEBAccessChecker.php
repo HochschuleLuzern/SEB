@@ -63,8 +63,7 @@ class ilSEBAccessChecker
         ilRbacReview $rbacreview,
         HTTPServices $http,
         ilSEBConfig $conf
-    )
-    {
+    ) {
         $this->ctrl = $ctrl;
         $this->user = $user;
         $this->auth = $auth;

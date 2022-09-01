@@ -106,7 +106,7 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
                 $image = $this->withLogoAction($image);
                 return $image;
             }
-            )->withHighPriority();
+        )->withHighPriority();
     }
     
     public function getTitleModification(CalledContexts $screen_context_stack) : ?TitleModification
@@ -140,7 +140,7 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
     private function initializeHeaderTitleObject() : ilSEBHeaderTitleObject
     {
         $title_object = new ilSEBHeaderTitleObject($this->plugin, $this->dic->user());
-        if ($this->plugin->getCurrentRefId() !== Null && $this->plugin->getCurrentRefId() !== 0) {
+        if ($this->plugin->getCurrentRefId() !== null && $this->plugin->getCurrentRefId() !== 0) {
             $object = ilObjectFactory::getInstanceByRefId($this->plugin->getCurrentRefId());
             $title_object = $title_object->withObject($object);
         }

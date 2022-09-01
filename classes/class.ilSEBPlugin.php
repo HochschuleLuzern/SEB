@@ -78,7 +78,7 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
     private static $kioskmode_checked = false;
     
     private $seb_config;
-    private $access_checker;    
+    private $access_checker;
     
     private $current_ref_id;
     
@@ -142,8 +142,8 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
          * We need to switch the kioskmode off in tests to avoid collitions in certain modification providers
          * for the GlobalScreen. We need to check this here, because there simply is no other place.
          */
-        if (!self::$kioskmode_checked && 
-            $this->access_checker->isSwitchToSebSkinNeeded() && 
+        if (!self::$kioskmode_checked &&
+            $this->access_checker->isSwitchToSebSkinNeeded() &&
             ilObject::_lookupType($this->current_ref_id, true) == 'tst'
         ) {
             $test = new ilObjTest($this->getCurrentRefId());
@@ -211,7 +211,7 @@ class ilSEBPlugin extends ilUserInterfaceHookPlugin
     private function extractRefIdFromTargetParameter(String $target) : ?int
     {
         $target_array = explode('_', $target);
-        if (is_numeric($target_array[1])  && $target_array[1] > 0) {
+        if (is_numeric($target_array[1]) && $target_array[1] > 0) {
             return (int) $target_array[1];
         }
         

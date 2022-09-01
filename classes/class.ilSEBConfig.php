@@ -37,7 +37,8 @@ class ilSEBConfig
         }
     }
     
-    public function getCmdClassesWithoutSebKeyTab() : array {
+    public function getCmdClassesWithoutSebKeyTab() : array
+    {
         return self::CMD_CLASSES_WITHOUT_SEB_KEY_TAB;
     }
     
