@@ -1,52 +1,55 @@
+/**
+/ German Language File for SEB-Plugin
+**/
 <!-- language file start -->
-config#:#Konfiguration
-req_header#:#Request Header
-req_header_info#:#Der Name des Request-Header-Feldes. PHP stellt dem Feldnamen automatisch den Prefix "HTTP_" voran, tauscht Bindestriche "-" mit Unterstrichen "_" aus und setzt den gesamten Text in Großbuchstaben. <br />Der ursprüngliche Feldname in der SEB-Konfigurationsdatei heißt "X-SafeExamBrowser-RequestHash".
-allow_object_keys#:#Objekt-spezifische Keys aktivieren
-allow_object_keys_info#:#Wenn Sie diese Option auswählen, können Benutzer, die in einem Kurs die Einstellungen bearbeiten dürfen, auch eigene Keys für ihre Objekte setzen.
-seb_keys#:#SEB Keys
-seb_keys_info#:#Die komma-separierten Schlüssel für die SEB-Erkennung als Wert des o.g. Request-Header-Feldes. <br />WARNUNG! Sobald Sie einen oder mehrere Schlüssel eingeben und abspeichern und ohne Objekt-spezifische Keys zu erlauben, werden in der Standardeinstellung alle Nutzer außer Admins abgewiesen, wenn diese ohne einen abgesicherten Browser auf diese Plattform zugreifen! 
-url_salt#:#URL Salt (experimentell)
-url_salt_info#:#Wenn "URL Salt" ausgewählt ist, wird bei jeder Anfrage sowohl der SEB Schlüssel als auch die URL angehängt und per sha1-256 verschlüsselt übertragen. Bitte fragen Sie Ihren Systemadministrator für weitere Informationen.
-role_deny#:#Zugriff für Rolle verbieten
-role_deny_info#:#Wenn dieser Schalter auf "Alle außer Admin" eingestellt ist, wird der Zugriff für alle Rollen standardmäßig blockiert und nur durchgelassen, wenn die Anfrage vom SEB kommt.
-browser_access#:#Zugriff für Browser
-browser_access_info#:#Wenn dieser Schalter auf "SEB" steht und "Zugriff für Rolle verbieten" auf "Alle außer Admin", werden nur Zugriffe mit dem SEB zugelassen<br />Die Einstellung "Kein Browser" führt dazu, dass <strong>Alle</strong> Nutzer außer Admins ausgesperrt sind. Bitte seien Sie vorsichtig!
-role_kiosk#:#Rolle für den Kiosk-Skin
-role_kiosk_info#:#Die Rolle, bei der automatisch der Kiosk-Skin zugeordnet wird.
-browser_kiosk#:#Browser für den Kiosk-Skin
-browser_kiosk_info#:#Der Browser, bei dem der Kiosk-Skin aktiviert wird. Wenn keine "Rolle für den Kiosk Skin" angegeben ist, wird diese Einstellung ignoriert.
-role_all_except_admin#:#Alle außer Admin
-role_none#:#Keine Rolle
-browser_seb#:#SEB
-browser_none#:#Kein Browser
-browser_all#:#Alle Browser
 activate_session_control#:#Session-Überprüfung aktivieren
 activate_session_control_info#:#Diese Einstellung aktiviert einen Tab im Test, welcher es erlaubt Sessions von Testnutzern zu beenden. Dies ist wichtig, um auf Systemen, auf welchen gleichzeitige Logins verhindert werden, im Fall von Abstürzen den Studierenden wieder Zugriff geben zu können.
 activate_session_control_info_disabled#:#Um diese Funktion nutzen zu können, müssen sie in der Administration unter "Benutzerverwaltung Einstellung" "Verhindern gleichzeitiger Logins" aktivieren. Sie erlaubt es, auf Systemen, auf welchen gleichzeitige Logins verhindert werden, im Fall von Abstürzen den Studierenden wieder Zugriff zu gewähren.
-save_success#:#Speichern erfolgreich
-save_failure#:#Speichern fehlgeschlagen!
-nothing_changed#:#Keine Änderungen
-forbidden_header#:#Keine Berechtigung!
-forbidden_message#:#Sie haben mit diesem Browser keine Berechtigung auf das System zuzugreifen. <br />Bitte kontaktieren Sie den Systemadministrator.
-forbidden_login#:#Bei ILIAS anmelden
-settings_tab_title#:#SEB Keys
-sessions_tab_title#:#Benutzer-Sessions
-title_settings_form#:#Objekt-spezifische Keys
+allow_object_keys#:#Objekt-spezifische Keys aktivieren
+allow_object_keys_info#:#Wenn Sie diese Option auswählen, können Benutzer, die in einem Kurs die Einstellungen bearbeiten dürfen, auch eigene Keys für ihre Objekte setzen.
+browser_access#:#Zugriff für Browser
+browser_access_info#:#Wenn dieser Schalter auf "SEB" steht und "Zugriff für Rolle verbieten" auf "Alle außer Admin", werden nur Zugriffe mit dem SEB zugelassen<br />Die Einstellung "Kein Browser" führt dazu, dass <strong>Alle</strong> Nutzer außer Admins ausgesperrt sind. Bitte seien Sie vorsichtig!
+browser_all#:#Alle Browser
+browser_kiosk#:#Browser für den Kiosk-Skin
+browser_kiosk_info#:#Der Browser, bei dem der Kiosk-Skin aktiviert wird. Wenn keine "Rolle für den Kiosk Skin" angegeben ist, wird diese Einstellung ignoriert.
+browser_none#:#Kein Browser
+browser_seb#:#SEB
+config#:#Konfiguration
+delete_session_of_users#:#Sessions von ausgewählten Teilnehmer/innen löschen
 description_settings_form#:#Keys, welche hier eingetragen werden, sind nur für dieses Objekt gültig!
-key_windows#:#Keys für Windows
-key_windows_info#:#Der Key ist im SEB Config Tool im Reiter 'Exams' zu finden. Achtung: Der Key ist funktioniert nur für die Version des SEB, mit welcher er generiert wurde! Es können mehrere durch Komma getrennte Schlüssel eingetragen werden.
+exam_id#:#Prüfungsnr.
+forbidden_header#:#Keine Berechtigung!
+forbidden_login#:#Bei ILIAS anmelden
+forbidden_message#:#Sie haben mit diesem Browser keine Berechtigung auf das System zuzugreifen. <br />Bitte kontaktieren Sie den Systemadministrator.
 key_macos#:#Keys für MacOS
 key_macos_info#:#Der Key ist im SEB Config Tool im Reiter 'Exams' zu finden. Achtung: Der Key ist funktioniert nur für die Version des SEB, mit welcher er generiert wurde! Es können mehrere durch Komma getrennte Schlüssel eingetragen werden.
-title_sessions_table#:#Aktuelle Sessions von Test-Teilnehmer/innen
-delete_session_of_users#:#Sessions von ausgewählten Teilnehmer/innen löschen
-show_pax_pic#:#Bilder der Teilnehmer/innen anzeigen
-show_pax_pic_info#:#Wenn diese Option aktiviert ist, wird während des Tests rechts oben ein Foto der Teilnehmerin/des Teilnehmers angezeigt. Bedingt, dass Profilbilder auf der ILIAS-Installation vorhanden sind.
+key_windows#:#Keys für Windows
+key_windows_info#:#Der Key ist im SEB Config Tool im Reiter 'Exams' zu finden. Achtung: Der Key ist funktioniert nur für die Version des SEB, mit welcher er generiert wurde! Es können mehrere durch Komma getrennte Schlüssel eingetragen werden.
+no_sessions_selected#:#Sie müssen mindestens eine Session auswählen, um diese zu entfernen.
+nothing_changed#:#Keine Änderungen
+req_header#:#Request Header
+req_header_info#:#Der Name des Request-Header-Feldes. PHP stellt dem Feldnamen automatisch den Prefix "HTTP_" voran, tauscht Bindestriche "-" mit Unterstrichen "_" aus und setzt den gesamten Text in Großbuchstaben. <br />Der ursprüngliche Feldname in der SEB-Konfigurationsdatei heißt "X-SafeExamBrowser-RequestHash".
+role_all_except_admin#:#Alle außer Admin
+role_deny#:#Zugriff für Rolle verbieten
+role_deny_info#:#Wenn dieser Schalter auf "Alle außer Admin" eingestellt ist, wird der Zugriff für alle Rollen standardmäßig blockiert und nur durchgelassen, wenn die Anfrage vom SEB kommt.
+role_kiosk#:#Rolle für den Kiosk-Skin
+role_kiosk_info#:#Die Rolle, bei der automatisch der Kiosk-Skin zugeordnet wird.
+role_none#:#Keine Rolle
+save_failure#:#Speichern fehlgeschlagen!
+save_success#:#Speichern erfolgreich
+seb_keys#:#SEB Keys
+seb_keys_info#:#Die komma-separierten Schlüssel für die SEB-Erkennung als Wert des o.g. Request-Header-Feldes. <br />WARNUNG! Sobald Sie einen oder mehrere Schlüssel eingeben und abspeichern und ohne Objekt-spezifische Keys zu erlauben, werden in der Standardeinstellung alle Nutzer außer Admins abgewiesen, wenn diese ohne einen abgesicherten Browser auf diese Plattform zugreifen! 
+sessions_deleted#:#Die Session(s) wurden entfernt.
+sessions_tab_title#:#Benutzer-Sessions
+settings_tab_title#:#SEB Keys
 show_pax_matriculation#:#Matrikelnummer der Teilnehmer/innen anzeigen
 show_pax_matriculation_info#:#Wenn diese Option aktiviert ist, wird während des Tests im Kopf die Matrikelnummer der Teilnehmerin/des Teilnehmers angezeigt.
+show_pax_pic#:#Bilder der Teilnehmer/innen anzeigen
+show_pax_pic_info#:#Wenn diese Option aktiviert ist, wird während des Tests rechts oben ein Foto der Teilnehmerin/des Teilnehmers angezeigt. Bedingt, dass Profilbilder auf der ILIAS-Installation vorhanden sind.
 show_pax_username#:#Benutzernamen der Teilnehmer/innen anzeigen
 show_pax_username_info#:#Wenn diese Option aktiviert ist, wird während des Tests im Kopf der Benutzername der Teilnehmerin/des Teilnehmers angezeigt.
-no_sessions_selected#:#Sie müssen mindestens eine Session auswählen, um diese zu entfernen.
-sessions_deleted#:#Die Session(s) wurden entfernt.
 title_delete_sessions_table#:#Die folgenden Session(s) werden entfernt und die entsprechenden Teilnehmer/innen ausgeloggt.
-exam_id#:#Prüfungsnr.
+title_sessions_table#:#Aktuelle Sessions von Test-Teilnehmer/innen
+title_settings_form#:#Objekt-spezifische Keys
+url_salt#:#URL Salt (experimentell)
+url_salt_info#:#Wenn "URL Salt" ausgewählt ist, wird bei jeder Anfrage sowohl der SEB Schlüssel als auch die URL angehängt und per sha1-256 verschlüsselt übertragen. Bitte fragen Sie Ihren Systemadministrator für weitere Informationen.
