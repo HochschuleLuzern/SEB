@@ -47,6 +47,8 @@ show_pax_pic#:#Show picture of Participants
 show_pax_pic_info#:#If enabled a image of the participant is shown in the right corner of the screen. For this to work images need to be available on ILIAS.
 show_pax_username#:#Show username of Participants
 show_pax_username_info#:#If enabled the username of the participant is shown in the header
+allow_protocol_change#:Allow a protocol change in the request URL
+allow_protocol_change_info#:If enabled, a change between HTTP and HTTPS is allowed for the request URL. This might be necessary for certain proxy server configurations.
 title_delete_sessions_table#:#The following sessions will be deleted and the corresponding users will be logged out
 title_sessions_table#:#Current Sessions for Test-Participants
 title_settings_form#:#Object-specific Keys

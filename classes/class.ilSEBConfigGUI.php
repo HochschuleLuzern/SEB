@@ -126,6 +126,11 @@ class ilSEBConfigGUI extends ilPluginConfigGUI
         $show_pax_username_cb->setInfo($this->pl->txt('show_pax_username_info'));
         $show_pax_username_cb->setChecked($this->config->getShowPaxUsername());
         $form->addItem($show_pax_username_cb);
+
+        $allow_protocol_change_cb = new ilCheckboxInputGUI($this->pl->txt('allow_protocol_change'), 'allow_protocol_change');
+        $allow_protocol_change_cb->setInfo($this->pl->txt('allow_protocol_change_info'));
+        $allow_protocol_change_cb->setChecked($this->config->getAllowProtocolChange());
+        $form->addItem($allow_protocol_change_cb);
         
         $form->addCommandButton('save', $this->lang->txt('save'));
                     
