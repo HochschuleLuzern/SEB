@@ -87,9 +87,9 @@ class ilSEBConfig
         return (bool) $this->conf['show_pax_username'];
     }
 
-    public function getAllowProtocolChange() : bool
+    public function getIliasRootUri() : string
     {
-        return (bool) $this->conf['allow_protocol_change'];
+        return (string) $this->conf['ilias_root_uri'];
     }
     
     /**
@@ -160,7 +160,7 @@ class ilSEBConfig
             'show_pax_pic',
             'show_pax_matriculation',
             'show_pax_username',
-            'allow_protocol_change'
+            'ilias_root_uri'
         );
         
         $r = 0;
@@ -239,20 +239,6 @@ class ilSEBConfig
         foreach ($keys_from_config as $key_from_config) {
             if ($key_from_browser === hash('sha256', $request_url . trim($key_from_config))) {
                 return true;
-            }
-        }
-
-        if ($this->getAllowProtocolChange() === true) {
-            $check_url = $request_url;
-            if (strpos($request_url, 'http:') === 0) {
-                $check_url = str_replace('http:', 'https:', $request_url);
-            } else if (strpos($request_url, 'https:') === 0) {
-                $check_url = str_replace('https:', 'http:', $request_url);
-            }
-            foreach ($keys_from_config as $key_from_config) {
-                if ($key_from_browser === hash('sha256', $check_url . trim($key_from_config))) {
-                    return true;
-                }
             }
         }
         

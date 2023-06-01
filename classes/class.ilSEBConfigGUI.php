@@ -33,6 +33,7 @@ class ilSEBConfigGUI extends ilPluginConfigGUI
     private $lang;
     private $ctrl;
     private $rbac_review;
+    private $http;
     
     public function performCommand($cmd)
     {
@@ -46,6 +47,7 @@ class ilSEBConfigGUI extends ilPluginConfigGUI
                 $this->lang = $DIC->language();
                 $this->ctrl = $DIC->ctrl();
                 $this->rbac_review = $DIC->rbac()->review();
+                $this->http = $DIC->http();
                 $this->$cmd();
                 break;
 
@@ -127,11 +129,17 @@ class ilSEBConfigGUI extends ilPluginConfigGUI
         $show_pax_username_cb->setChecked($this->config->getShowPaxUsername());
         $form->addItem($show_pax_username_cb);
 
-        $allow_protocol_change_cb = new ilCheckboxInputGUI($this->pl->txt('allow_protocol_change'), 'allow_protocol_change');
-        $allow_protocol_change_cb->setInfo($this->pl->txt('allow_protocol_change_info'));
-        $allow_protocol_change_cb->setChecked($this->config->getAllowProtocolChange());
-        $form->addItem($allow_protocol_change_cb);
-        
+        $ilias_root_txt = new ilTextInputGUI($this->pl->txt("ilias_root_uri"), "ilias_root_uri");
+        $ilias_root_txt->setInfo($this->pl->txt("ilias_root_uri_info"));
+        $ilias_root_txt->setMaxLength(1000);
+        if ($this->config->getIliasRootUri() !== '') {
+            $ilias_root_txt->setValue($this->config->getIliasRootUri());
+        } else {
+            $uri = $this->http->request()->getUri();
+            $ilias_root_txt->setValue($uri->getScheme() . "://" . $uri->getHost() . $uri->getPort());
+        }
+        $form->addItem($ilias_root_txt);
+
         $form->addCommandButton('save', $this->lang->txt('save'));
                     
         $form->setTitle($this->pl->txt('config'));
@@ -154,6 +162,7 @@ class ilSEBConfigGUI extends ilPluginConfigGUI
             $form_input['show_pax_pic'] = $form->getInput('show_pax_pic');
             $form_input['show_pax_matriculation'] = $form->getInput('show_pax_matriculation');
             $form_input['show_pax_username'] = $form->getInput('show_pax_username');
+            $form_input['ilias_root_uri'] = $form->getInput('ilias_root_uri');
             
             $success = $this->config->saveSEBConf($form_input);
 
