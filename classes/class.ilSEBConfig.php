@@ -86,6 +86,11 @@ class ilSEBConfig
     {
         return (bool) $this->conf['show_pax_username'];
     }
+
+    public function getIliasRootUri() : string
+    {
+        return (string) $this->conf['ilias_root_uri'];
+    }
     
     /**
      * @return string[]
@@ -154,7 +159,8 @@ class ilSEBConfig
             'activate_session_control',
             'show_pax_pic',
             'show_pax_matriculation',
-            'show_pax_username'
+            'show_pax_username',
+            'ilias_root_uri'
         );
         
         $r = 0;
