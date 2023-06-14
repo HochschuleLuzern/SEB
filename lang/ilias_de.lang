@@ -48,8 +48,8 @@ show_pax_pic#:#Bilder der Teilnehmer/innen anzeigen
 show_pax_pic_info#:#Wenn diese Option aktiviert ist, wird während des Tests rechts oben ein Foto der Teilnehmerin/des Teilnehmers angezeigt. Bedingt, dass Profilbilder auf der ILIAS-Installation vorhanden sind.
 show_pax_username#:#Benutzernamen der Teilnehmer/innen anzeigen
 show_pax_username_info#:#Wenn diese Option aktiviert ist, wird während des Tests im Kopf der Benutzername der Teilnehmerin/des Teilnehmers angezeigt.
-ilias_root_uri#:ILIAS Root-URI
-ilias_root_uri_info#:Diese URI kann angepasst werden, falls die ILIAS-URI (Protokoll/Host/Port) von der Anfrage-URL des SEB abweicht (z.B. in Proxy-Konfigurationen). Der Wert kann gelöscht werden, um ihn auf die URI des ILIAS-Systems zurückzusetzen.
+ilias_root_uri#:#ILIAS Root-URI
+ilias_root_uri_info#:#Diese URI kann angepasst werden, falls die ILIAS-URI (Protokoll/Host/Port) von der Anfrage-URL des SEB abweicht (z.B. in Proxy-Konfigurationen). Der Wert kann gelöscht werden, um ihn auf die URI des ILIAS-Systems zurückzusetzen.
 title_delete_sessions_table#:#Die folgenden Session(s) werden entfernt und die entsprechenden Teilnehmer/innen ausgeloggt.
 title_sessions_table#:#Aktuelle Sessions von Test-Teilnehmer/innen
 title_settings_form#:#Objekt-spezifische Keys

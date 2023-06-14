@@ -163,6 +163,9 @@ if ($ilDB->query("SELECT * FROM ui_uihk_seb_conf WHERE name='show_pax_username'"
     );
     $ilDB->insert('ui_uihk_seb_conf', $data);
 }
+?>
+<#8>
+<?php
 if ($ilDB->query("SELECT * FROM ui_uihk_seb_conf WHERE name='ilias_root_uri'")->numRows() == 0) {
     $data = array(
         'name' => array('text', 'ilias_root_uri'),
