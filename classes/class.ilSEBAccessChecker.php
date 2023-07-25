@@ -249,7 +249,7 @@ class ilSEBAccessChecker
 
         if ($this->conf->getIliasRootUri() !== '') {
             $root_uri = new \ILIAS\Data\URI($this->conf->getIliasRootUri());
-            $protocol = $root_uri->getHost();
+            $protocol = $root_uri->getSchema();
             $port = $root_uri->getPort();
             $host = $root_uri->getHost();
         }
