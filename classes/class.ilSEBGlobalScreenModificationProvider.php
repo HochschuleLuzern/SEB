@@ -61,7 +61,7 @@ class ilSEBGlobalScreenModificationProvider extends AbstractModificationPluginPr
     public function getMetaBarModification(CalledContexts $screen_context_stack) : ?MetaBarModification
     {
         return $this->dic->globalScreen()->layout()->factory()->metabar()->withModification(
-            function (MetaBar $current = null) : MetaBar {
+            function (MetaBar $current = null) : ?MetaBar {
                 $empty_metabar = $current->withClearedEntries();
                 if (!$this->isTestRunning()) {
                     $empty_metabar = $this->withLanguageAndLogout($empty_metabar);
